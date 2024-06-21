@@ -1,0 +1,5 @@
+# binder/start
+#!/bin/bash
+
+
+julia --project=@. static/scripts/solver/solver.jl

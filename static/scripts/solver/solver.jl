@@ -279,6 +279,5 @@ function handle_request(req)
         return HTTP.Response(405, JSON.json(Dict("error" => "Method not allowed")))
     end
 end
-# HTTP.serve(handle_request, "127.0.0.1", 1111)
-println(Pkg.envdir())
+HTTP.serve(handle_request, "127.0.0.1", 1111)
 

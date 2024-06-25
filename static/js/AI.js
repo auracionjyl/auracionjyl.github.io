@@ -141,7 +141,8 @@ function Condition_AI() {
 				for (var i = 0; i < that.candidates.length; i++){
 					that.b.add_sol_piece(that.candidates[i], -1 - (black.length != white.length))
 					that.b.show_last_move(that.candidates[i], -1 - (black.length != white.length));
-				}
+				};
+				that.p.color = (black.length != white.length)
 				that.player_turn()
 			})
 	}

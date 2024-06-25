@@ -120,7 +120,7 @@ function Condition_AI() {
     }
 
 	this.solve = function (black, white, win_in_n){
-		fetch('http://34.66.66.12/api', {
+		fetch('http://34.66.66.12/api/', {
 			method: 'POST',
 			// mode: 'no-cors',
 			headers: {

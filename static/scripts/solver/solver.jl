@@ -255,8 +255,8 @@ end
 function handle_request(req)
     headers = [
         "Access-Control-Allow-Origin" => "*",
-        "Access-Control-Allow-Methods" => "POST",
-        "Access-Control-Allow-Headers" => "Origin, Content-Type",
+        "Access-Control-Allow-Methods" => "POST, OPTIONS",
+        "Access-Control-Allow-Headers" => "Origin, Content-Type, Accept",
         "Content-Type" => "application/json",
         "Accept-Encoding" => "gzip, deflate, br, zstd"
     ]
@@ -279,5 +279,9 @@ function handle_request(req)
         return HTTP.Response(405, JSON.json(Dict("error" => "Method not allowed")))
     end
 end
-HTTP.serve(handle_request, "127.0.0.1", 1111)
+
+#router = HTTP.Router()
+#HTTP.@register(router, "POST", "/", handle_request)
+#HTTP.@register(router, "OPTIONS", "/", handle_request)
+HTTP.serve(handle_request, "10.128.0.2", 1111)
 

@@ -5,7 +5,8 @@ function Board() {
 	this.tiles = [];
 	this.black_piece = "<div class='blackPiece'></div>";
 	this.white_piece = "<div class='whitePiece'></div>";
-	this.solution_piece = "<div class='solPiece'></div>";
+	this.black_solution_piece = "<div class='blackSolPiece'></div>";
+	this.white_solution_piece = "<div class='whiteSolPiece'></div>";
 	this.black_position = restore_array("000000000000000000000000000000000000");
 	this.white_position = restore_array("000000000000000000000000000000000000");
 	this.puzzle_black_position = restore_array("000000000000000000000000000000000000");
@@ -80,8 +81,12 @@ function Board() {
 		}
 	}
 
-	this.add_sol_piece = function (loc){
-		that.tiles[loc].append(that.solution_piece).css("backgroundColor", square_bkgcolor);
+	this.add_sol_piece = function (loc, col){
+		if (col == -1){
+			that.tiles[loc].append(that.black_solution_piece).css("backgroundColor", square_bkgcolor);
+		} else{
+			that.tiles[loc].append(that.white_solution_piece).css("backgroundColor", square_bkgcolor);
+		}
 	}
 
 	this.remove_sol_piece = function (loc){
@@ -104,8 +109,11 @@ function Board() {
 			$(".blackShadow").remove();
 			that.tiles[loc].append("<div class='blackShadow'></div>");
 		} else if(col == -1){
-			$(".solShadow").remove();
-			that.tiles[loc].append("<div class='solShadow'></div>");
+			// $(".blackSolShadow").remove();
+			that.tiles[loc].append("<div class='blackSolShadow'></div>");
+		} else if(col == -2){
+			// $(".whiteSolShadow").remove();
+			that.tiles[loc].append("<div class='whiteSolShadow'></div>");
 		}
 		else {
 			$(".whiteShadow").remove();

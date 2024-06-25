@@ -105,7 +105,7 @@ img {
 
 .tile {	cursor:pointer; }
 
-.blackPiece, .whitePiece, .solPiece {
+.blackPiece, .whitePiece, .blackSolPiece, .whiteSolPiece {
 	vertical-align:middle;
 	position: relative;
 	margin: 12.5% auto 0% auto;
@@ -115,7 +115,7 @@ img {
 	z-index:7;
 }
 
-.blackShadow, .whiteShadow, .solShadow {
+.blackShadow, .whiteShadow, .blackSolShadow, .whiteSolShadow {
 	vertical-align:middle;
 	position: relative;
 	margin-right:auto;
@@ -131,9 +131,9 @@ img {
 
 .whiteShadow { box-shadow: 0px 0px 3vw .7vw #333333; }
 
-.solShadow { box-shadow: 0px 0px 3vw .7vw #d43f3a; }
+.blackSolShadow, .whiteSolShadow { box-shadow: 0px 0px 3vw .7vw #d43f3a; }
 
-.blackChoice, .whiteChoice {
+.blackChoice, .whiteChoice, .blackSolChoice, .whiteSolChoice {
 	vertical-align:middle;
 	text-align: center;
 	position: relative;
@@ -162,13 +162,14 @@ img {
 
 .blackChoice { border-color:black; }
 .whiteChoice { border-color:white; }
-.solChoice {border-color:#cf0000;}
-.blackPiece, .blackMark { background-color:black; }
+.blackSolChoice, .whiteSolChoice { border-color:#cf0000; border-width:1.6vh;}
 
+.blackPiece, .blackMark { background-color:black; }
 .whitePiece, .whiteShadow, .whiteMark, .blackShadow { background-color: white; }
 
-.solPiece, .solMark {background-color: #cf0000;}
-.solShadow {background-color: #d43f3a;}
+.blackSolPiece, .blackSolMark { background-color:black; border-color:#cf0000; border-width:1.6vh;}
+.whiteSolPiece, .whiteSolMark { background-color: white; border-color:#cf0000; border-width:1.6vh;}
+.blackSolShadow, .whiteSolShadow { background-color: #d43f3a; }
 
 ._blank_ { min-height:1.6vh;}
 

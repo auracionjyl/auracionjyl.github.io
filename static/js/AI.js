@@ -12,15 +12,15 @@ function Condition_AI() {
 
 		that.candidates = that.solver.select_branch(m)
 		for (var i = 0; i < that.candidates.length; i++){
-			that.b.add_sol_piece(that.candidates[i])
-			that.b.show_last_move(that.candidates[i], -1);
+			that.b.add_sol_piece(that.candidates[i], -2 + that.p.color)
+			that.b.show_last_move(that.candidates[i], -2 + that.p.color);
 		}
 		that.p.color = 1 - that.p.color
 		that.player_turn();
     }
 
     this.tileClickHandler = function(e) {
-		if (e.target.className === "solPiece"){
+		if (e.target.className === "blackSolPiece" | e.target.className === "whiteSolPiece"){
 			that.p.move = parseInt(e.target.parentElement.id);
 		}
 		else{
@@ -64,16 +64,13 @@ function Condition_AI() {
     this.player_turn = function(){
         that.p.move_start = Date.now();
         that.b.highlight_tiles();
-        $('.headertext h1').text('Your turn').css('color', '#000000');
+        // $('.headertext h1').text('Your turn').css('color', '#000000');
         $('.canvas, .tile').css('cursor', 'pointer');
         $('.usedTile, .usedTile div').css('cursor', 'default');
         $('.tile').off('click').on('click', function(e, candidates) { that.tileClickHandler(e); });
     }
     
     this.start_game = function() {
-		that.b.fraze_all()
-		$('.headertext h1').text('Finding Solutions...').css('color', '#000000');
-		that.b.game_status = "playing"
 		var selectElement = document.getElementById('win-in-n');
 		var selectedValue = selectElement.options[selectElement.selectedIndex].value;
 		var black = []
@@ -82,7 +79,14 @@ function Condition_AI() {
 			if(that.b.puzzle_black_position[i] === 1){black.push(i)}
 			if(that.b.puzzle_white_position[i] === 1){white.push(i)}
 		}
-		that.solve(black, white, selectedValue)
+		if (black.length == white.length | black.length == white.length + 1){
+			that.b.fraze_all()
+			$('.headertext h1').text('Finding Solutions...').css('color', '#000000');
+			that.b.game_status = "playing"
+			that.solve(black, white, selectedValue)
+		} else{
+			$('.headertext h1').text('Illegal Piece Number: Black: ' + String(black.length) + ', White: ' + String(white.length)).css('color', '#000000');
+		}
     }
 
 	this.set_puzzle = function (){
@@ -121,6 +125,7 @@ function Condition_AI() {
 
 	this.solve = function (black, white, win_in_n){
 		fetch('http://34.66.66.12/api/', {
+		// fetch('http://127.0.0.1:1111', {
 			method: 'POST',
 			// mode: 'no-cors',
 			headers: {
@@ -134,8 +139,8 @@ function Condition_AI() {
 				that.b.highlight_tiles();
 				that.candidates = that.solver.init_branch();
 				for (var i = 0; i < that.candidates.length; i++){
-					that.b.add_sol_piece(that.candidates[i])
-					that.b.show_last_move(that.candidates[i], -1);
+					that.b.add_sol_piece(that.candidates[i], -1 - (black.length != white.length))
+					that.b.show_last_move(that.candidates[i], -1 - (black.length != white.length));
 				}
 				that.player_turn()
 			})

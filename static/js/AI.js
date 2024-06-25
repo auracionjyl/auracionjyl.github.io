@@ -142,7 +142,7 @@ function Condition_AI() {
 					that.b.add_sol_piece(that.candidates[i], -1 - (black.length != white.length))
 					that.b.show_last_move(that.candidates[i], -1 - (black.length != white.length));
 				};
-				that.p.color = (black.length != white.length)
+				that.p.color = Number(black.length != white.length)
 				that.player_turn()
 			})
 	}

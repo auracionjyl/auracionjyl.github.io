@@ -111,6 +111,12 @@ function Condition_AI() {
 			$('html').css('cursor', 'none');
 			that.solver.reset_path()
 			that.b.reset_puzzle();
+			that.candidates = that.solver.init_branch();
+			for (var i = 0; i < that.candidates.length; i++){
+				that.b.add_sol_piece(that.candidates[i], -1 - (black.length != white.length))
+				that.b.show_last_move(that.candidates[i], -1 - (black.length != white.length));
+			};
+			that.p.color = Number(black.length != white.length)
 			that.player_turn();
 		})
 
@@ -123,27 +129,64 @@ function Condition_AI() {
 		that.set_puzzle();
     }
 
-	this.solve = function (black, white, win_in_n){
-		fetch('http://34.66.66.12/api/', {
-		// fetch('http://127.0.0.1:1111', {
+	// this.solve = function (black, white, win_in_n){
+	// 	// fetch('http://34.66.66.12/api/', {
+	// 	fetch('http://127.0.0.1:1111', {
+	// 		method: 'POST',
+	// 		// mode: 'no-cors',
+	// 		headers: {
+	// 			'Content-Type': 'application/json'
+	// 		},
+	// 		body: JSON.stringify({ black: black, white: white, win_in_n: Number(win_in_n) })
+	// 	}).then(response => response.json())
+	// 		.then(res => {
+	// 			that.solver.solutions = res["result"][0];
+	// 			$('.headertext h1').text('Totally found ' + String((res["result"][0]["-1"]).length) + ' solutions in ' + String(res["result"][1]) + ' seconds').css('color', '#000000');
+	// 			that.b.highlight_tiles();
+	// 			that.candidates = that.solver.init_branch();
+	// 			for (var i = 0; i < that.candidates.length; i++){
+	// 				that.b.add_sol_piece(that.candidates[i], -1 - (black.length != white.length))
+	// 				that.b.show_last_move(that.candidates[i], -1 - (black.length != white.length));
+	// 			};
+	// 			that.p.color = Number(black.length != white.length)
+	// 			that.player_turn()
+	// 		})
+	// }
+
+	this.solve = function (black, white, win_in_n) {
+		// fetch('http://34.66.66.12/api/', {
+		fetch('http://127.0.0.1:1111', {
 			method: 'POST',
-			// mode: 'no-cors',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({ black: black, white: white, win_in_n: Number(win_in_n) })
-		}).then(response => response.json())
-			.then(res => {
-				that.solver.solutions = res["result"];
-				$('.headertext h1').text('Totally ' + String((res["result"]["-1"]).length) + ' Solutions').css('color', '#000000');
-				that.b.highlight_tiles();
-				that.candidates = that.solver.init_branch();
-				for (var i = 0; i < that.candidates.length; i++){
-					that.b.add_sol_piece(that.candidates[i], -1 - (black.length != white.length))
-					that.b.show_last_move(that.candidates[i], -1 - (black.length != white.length));
+		}).then($('.headertext h1').text('The solver has received the puzzle, finding solutions ...').css('color', '#000000'))
+			.then(data => {
+				// 设置服务器端事件监听器来接收结果
+				const eventSource = new EventSource('http://127.0.0.1:1112/result');
+				eventSource.onmessage = function(event) {
+					const resultData = JSON.parse(event.data);
+					that.solver.solutions = resultData["result"][0];
+					$('.headertext h1').text('Totally found ' + String((resultData["result"][0]["-1"]).length) + ' solutions in ' + String(resultData["result"][1]) + ' seconds').css('color', '#000000');
+					that.b.highlight_tiles();
+					that.candidates = that.solver.init_branch();
+					for (var i = 0; i < that.candidates.length; i++){
+						that.b.add_sol_piece(that.candidates[i], -1 - (black.length != white.length))
+						that.b.show_last_move(that.candidates[i], -1 - (black.length != white.length));
+					};
+					that.p.color = Number(black.length != white.length)
+					that.player_turn()
+					eventSource.close(); // 接收到结果后关闭连接
 				};
-				that.p.color = Number(black.length != white.length)
-				that.player_turn()
+				eventSource.onerror = function(event) {
+					console.error('Error with EventSource:', event);
+					eventSource.close(); // 出现错误时关闭连接
+				};
 			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
 	}
+
 }

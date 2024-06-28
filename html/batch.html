@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "utf-8">
+    <meta http-equiv = "X-UA-Compatible" content = "IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="">
+    <meta name="author" content="Ma Lab">
+    <title>4IAR Solver</title>
+
+    <script src="./static/js/lib/jquery-2.2.4.min.js"></script>
+    <script src="./static/js/lib/jquery-ui.min.js"></script>
+    <script src="./static/js/lib/bootstrap-12/bootstrap.min.js"></script>
+    <script src="./static/js/lib/underscore-min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="./static/js/util.js"></script>
+    <script src="./static/js/game.js"></script>
+    <script src="./static/js/AI.js"></script>
+    <script src="./static/scripts/Code/makemove.js"></script>
+
+    <script>
+        var blocks, player, builder;
+        M=9;
+        N=4;
+        K=4;
+
+        $(document).ready(function() {
+            current_block = 0;
+            player = new Player();
+            builder = new Builder();
+            solver = new Solver()
+
+            board = new Board();
+            board.create_tiles()
+            blocks = [new Condition_AI(60)];
+            blocks[current_block].run()
+        });
+    </script>
+
+    <link href = "./static/css/lib/bootstrap-12/bootstrap.min.css" rel = "stylesheet">
+    <link href = './static/css/stylesheet.css' rel='stylesheet'>
+
+
+</head>
+<body>
+
+<div class="modal fade" id="feedback-modal" data-backdrop="static" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+<!--                <h2 class="modal-title">Good Game</h2>-->
+                <!--        <div class='row'>-->
+                <!--          <div class='col-xs-10 col-xs-offset-1 text-center' id='scorebox'>-->
+                <!--            <div id='p0-score' class='col-xs-6 text-center'>-->
+                <!--              <h4>You:</h4>-->
+                <!--              <h2>0</h2>-->
+                <!--            </div>-->
+                <!--            <div id='p1-score' class='col-xs-6 text-center'>-->
+                <!--              <h4>Computer:</h4>-->
+                <!--              <h2>0</h2>-->
+                <!--            </div>-->
+                <!--          </div>-->
+                <!--        </div>-->
+<!--                <button class="btn btn-large btn-warning" id="reset-puzzle-dialog">Reset Puzzle</button>-->
+<!--                <button class="btn btn-large btn-warning" id="reset-board-dialog">Reset Board</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class='container-fluid text-center'>
+    <div class='row'>
+        <div class="headertext col-xs-8 col-xs-offset-2">
+            <h1>Your turn</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="container-fluid col-xs-8 col-xs-offset-2 canvas-container">
+            <div class="canvas"></div>
+            <form id="uploadPuzzle">
+                <input type="file" id="PuzzleFile" />
+                <button type="submit">Solve</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

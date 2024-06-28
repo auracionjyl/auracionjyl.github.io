@@ -217,11 +217,11 @@ function step(group_states, empty_squares, path, turn_color, is_player, depth, m
 end
 
 
-function search(black, white, max_depth)
+function search_one(black, white, max_depth)
     println(black)
     println(white)
     println(max_depth)
-    @time begin
+    soltime = @timed begin
         player_color = length(black) == length(white) ? "black" : "white"
         group_states, empty_squares = init_state(black, white)
         forced_win_cand, all_forced_win_paths, num_node = step(group_states, empty_squares, [], player_color, true, 1, 2 * max_depth)
@@ -249,37 +249,148 @@ function search(black, white, max_depth)
         k = join(string.(buff), ",")
         forced_win_tree[k] = "terminal"
     end
-    return forced_win_tree
+    return forced_win_tree, soltime.time
 end
 
-function handle_request(req)
-    headers = [
-        "Access-Control-Allow-Origin" => "*",
-        "Access-Control-Allow-Methods" => "POST, OPTIONS",
-        "Access-Control-Allow-Headers" => "Origin, Content-Type, Accept",
-        "Content-Type" => "application/json",
-        "Accept-Encoding" => "gzip, deflate, br, zstd"
-    ]
 
-    # Handle OPTIONS for CORS preflight
-    if string(req.method) == "OPTIONS"
-        return HTTP.Response(204, HTTP.Headers(headers))
-    end
-    if string(req.method) == "POST"
-        try
-            data = JSON.parse(String(req.body))
-            result = search(data["black"], data["white"], data["win_in_n"])
-            println(HTTP.Response(200, HTTP.Headers(headers); body=JSON.json(Dict("result" => result))))
-            return HTTP.Response(200, HTTP.Headers(headers); body=JSON.json(Dict("result" => result)))
-        catch e
-            println(e)
-            return HTTP.Response(400, JSON.json(Dict("error" => "Invalid data")))
-        end
+function search(data, time_only=false)
+    if data isa Dict
+        return search_one(data["black"], data["white"], data["win_in_n"])
     else
-        return HTTP.Response(405, JSON.json(Dict("error" => "Method not allowed")))
+        all_tree = []
+        all_time = []
+        for puzzle in data
+            forced_win_tree, soltime = search_one(puzzle["black"], puzzle["white"], puzzle["win_in_n"])
+            push!(all_tree, forced_win_tree)
+            push!(all_time, [puzzle["win_in_n"], soltime])
+        end
+        if time_only
+            return all_time
+        else
+            return Dict("tree" => all_tree, "time" => all_time)
+        end
     end
 end
 
-HTTP.serve(handle_request, "10.128.0.2", 1111)
+
+# function handle_request(req)
+#     headers = [
+#         "Access-Control-Allow-Origin" => "*",
+#         "Access-Control-Allow-Methods" => "POST, OPTIONS",
+#         "Access-Control-Allow-Headers" => "Origin, Content-Type, Accept",
+#         "Content-Type" => "application/json",
+#         "Accept-Encoding" => "gzip, deflate, br, zstd"
+#     ]
+#
+#     # Handle OPTIONS for CORS preflight
+#     if string(req.method) == "OPTIONS"
+#         return HTTP.Response(204, HTTP.Headers(headers))
+#     end
+#     if string(req.method) == "POST"
+#         try
+#             data = JSON.parse(String(req.body))
+#             result = search(data)
+#             println(HTTP.Response(200, HTTP.Headers(headers); body=JSON.json(Dict("result" => result))))
+#             return HTTP.Response(200, HTTP.Headers(headers); body=JSON.json(Dict("result" => result)))
+#         catch e
+#             println(e)
+#             return HTTP.Response(400, JSON.json(Dict("error" => "Invalid data")))
+#         end
+#     else
+#         return HTTP.Response(405, JSON.json(Dict("error" => "Method not allowed")))
+#     end
+# end
+
+
+# New Code
+# function handle_request(req)
+#     headers = [
+#         "Access-Control-Allow-Origin" => "*",
+#         "Access-Control-Allow-Methods" => "POST, OPTIONS",
+#         "Access-Control-Allow-Headers" => "Origin, Content-Type, Accept",
+#         "Content-Type" => "application/json",
+#         "Accept-Encoding" => "gzip, deflate, br, zstd"
+#     ]
+#
+#     # Handle OPTIONS for CORS preflight
+#     if string(req.method) == "OPTIONS"
+#         return HTTP.Response(204, HTTP.Headers(headers))
+#     end
+#
+#     if string(req.method) == "POST"
+#         try
+#             data = JSON.parse(String(req.body))
+#             result_channel = Channel{String}(1)  # Create a channel for the result
+#
+#             # Start the long computation in a separate task
+#             @async begin
+#                 result = search(data)
+#                 put!(result_channel, JSON.json(Dict("result" => result)))
+#             end
+#
+#             # Immediately return the acknowledgment response
+#             println(HTTP.Response(200, HTTP.Headers(headers); body=JSON.json(Dict("message" => "Request received"))))
+#             return HTTP.Response(200, HTTP.Headers(headers); body=JSON.json(Dict("message" => "Request received")))
+#         catch e
+#             println(e)
+#             return HTTP.Response(400, HTTP.Headers(headers); body=JSON.json(Dict("error" => "Invalid data")))
+#         end
+#     else
+#         return HTTP.Response(405, HTTP.Headers(headers); body=JSON.json(Dict("error" => "Method not allowed")))
+#     end
+# end
+#
+# function handle_result_request(req)
+#     try
+#         result = take!(result_channel)
+#         return HTTP.Response(200, HTTP.Headers(headers); body=result)
+#     catch e
+#         println(e)
+#         return HTTP.Response(500, HTTP.Headers(headers); body=JSON.json(Dict("error" => "Failed to get result")))
+#     end
+# end
+#
+# # Start the servers
+# @async HTTP.serve(handle_request, "127.0.0.1", 1111)
+# HTTP.serve(handle_result_request, "127.0.0.1", 1112)
+
+
+# HTTP.serve(handle_request, "10.128.0.2", 1111)
 # HTTP.serve(handle_request, "127.0.0.1", 1111)
 
+
+function solve_batch(data_path, json_path)
+    puzzles = []
+    buffer = []
+    lines = readlines(data_path)
+    for line in lines
+        line = strip(line)
+        if startswith(line, "case")
+            if length(buffer) > 0
+                for i in [1, 2, 3, 4, 5, 6]
+                    push!(puzzles, Dict("black" => buffer[1], "white" => buffer[2], "win_in_n" => i))
+                end
+                empty!(buffer)
+            end
+        else
+            pieces = split(line, " = ")[2]
+            pieces = JSON.parse(pieces)
+            push!(buffer, pieces)
+        end
+    end
+    for i in [1, 2, 3, 4, 5, 6]
+        push!(puzzles, Dict("black" => buffer[1], "white" => buffer[2], "win_in_n" => i))
+    end
+    println(length(puzzles))
+
+    all_time = search(puzzles, true)
+
+    json_str = JSON.json(all_time)
+    println(json_str)
+    Base.open("$json_path", "w") do file
+        write(file, json_str)
+    end
+end
+
+solve_batch("./data/shucheng_puzzles", "./data/shucheng_time.json")
+solve_batch("./data/jeroen_puzzles", "./data/jeroen_time.json")

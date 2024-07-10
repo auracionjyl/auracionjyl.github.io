@@ -13,10 +13,12 @@
   <script src="./static/js/lib/bootstrap-12/bootstrap.min.js"></script>
   <script src="./static/js/lib/underscore-min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://d3js.org/d3.v6.min.js"></script>
 
   <script src="./static/js/util.js"></script>
   <script src="./static/js/game.js"></script>
   <script src="./static/js/AI.js"></script>
+  <script src="./static/js/visulization.js"></script>
   <script src="./static/scripts/Code/makemove.js"></script>
 
   <script>
@@ -29,7 +31,8 @@
       current_block = 0;
       player = new Player();
       builder = new Builder();
-      solver = new Solver()
+      solver = new Solver();
+      visualizer = new Visualizer();
 
       board = new Board();
       board.create_tiles()
@@ -71,7 +74,7 @@
 
 <div class='container-fluid text-center'>
   <div class='row'>
-    <div class="headertext col-xs-8 col-xs-offset-2">
+    <div class="headertext col-xs-8 col-xs-offset-2" id="title text">
       <h1>Your turn</h1>
     </div>
   </div>
@@ -106,6 +109,16 @@
       <a href="html/batch.html">Solve in batch</a>
     </div>
   </div>
+  <div class='row'>
+    <div class="headertext col-xs-8 col-xs-offset-2" id="result text">
+      <h1>Results will be shown here</h1>
+    </div>
+  </div>
+  <div id="sol_dataviz" justify-content="center" align-items="center"></div>
+  <canvas id="sourceCanvas" width="900" height="400" style="display:none;"></canvas>
+<!--  <div class='row' display="flex" justify-content="center" align-items="center">-->
+<!--    <div id="sol_dataviz"></div>-->
+<!--  </div>-->
 </div>
 </body>
 </html>

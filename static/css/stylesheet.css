@@ -382,3 +382,46 @@ input[type=radio] {
 {
     background:#303030;
 }
+
+
+.node circle {
+	fill: #999;
+	cursor: pointer;
+}
+
+.node text {
+	font: 12px sans-serif;
+}
+
+.link {
+	fill: none;
+	stroke: #555;
+	stroke-width: 1.5px;
+}
+
+#sol_dataviz {
+	width: 800px;  /* 容器宽度 */
+	height: 400px; /* 容器高度 */
+	overflow: auto;  /* 启用滚动条 */
+	/*border: 1px solid #ccc;*/
+	/*display: flex;*/
+	justify-content: center; /* 水平居中 */
+	align-items: center; /* 垂直居中 */
+	width: 100vw; /* 宽度设置为视口宽度 */
+}
+
+/* SVG图形样式 */
+svg {
+	width: 2000px;  /* SVG图形宽度 */
+	height: 2000px; /* SVG图形高度 */
+}
+
+.preview {
+	position: absolute;
+	border: 3px solid #000000;
+	padding: 10px;
+	background-color: white;
+	box-shadow: 0 0 10px rgba(0,0,0,0.1);
+	display: none; /* 初始隐藏 */
+	z-index: 1000;
+}

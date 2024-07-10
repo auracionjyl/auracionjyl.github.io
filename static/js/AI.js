@@ -4,11 +4,12 @@ function Condition_AI() {
     this.p = player;
 	this.builder = builder;
 	this.solver = solver;
+	this.v = visualizer;
 	this.candidates = []
 		
     this.recommend_move = function(m) {
 		that.b.game_status = 'playing';
-		$('.headertext h1').text('Waiting for opponent').css('color', '#333333');
+		document.getElementById("title text").getElementsByTagName("h1")[0].textContent = 'Recommend moves of ' + (that.p.color == 1 ? "black" : "white");
 
 		that.candidates = that.solver.select_branch(m)
 		for (var i = 0; i < that.candidates.length; i++){
@@ -81,11 +82,11 @@ function Condition_AI() {
 		}
 		if (black.length == white.length | black.length == white.length + 1){
 			that.b.fraze_all()
-			$('.headertext h1').text('Finding Solutions...').css('color', '#000000');
+			document.getElementById("title text").getElementsByTagName("h1")[0].textContent = 'Finding Solutions...';
 			that.b.game_status = "playing"
 			that.solve(black, white, selectedValue)
 		} else{
-			$('.headertext h1').text('Illegal Piece Number: Black: ' + String(black.length) + ', White: ' + String(white.length)).css('color', '#000000');
+			document.getElementById("title text").getElementsByTagName("h1")[0].textContent = 'Illegal Piece Number: Black: ' + String(black.length) + ', White: ' + String(white.length);
 		}
     }
 
@@ -93,7 +94,8 @@ function Condition_AI() {
 		that.b = new Board();
 		that.b.create_tiles();
 		that.b.highlight_tiles();
-		$('.headertext h1').text('Set your puzzle').css('color', '#000000');
+		document.getElementById("title text").getElementsByTagName("h1")[0].textContent = 'Set your puzzle';
+		document.getElementById("result text").getElementsByTagName("h1")[0].textContent = 'Results will be shown here'
 		$('.canvas, .tile').css('cursor', 'pointer');
 		$('.usedTile, .usedTile div').css('cursor', 'default');
 		$('.tile').off('click').on('click', function(e) { that.puzzleClickHandler(e); });
@@ -104,6 +106,10 @@ function Condition_AI() {
 			$('#feedback-modal').modal('hide');
 			$('html').css('cursor', 'none');
 			that.solver.reset_board()
+			let i = 0;
+			// that.v.read_data([], [], [])
+			that.v.reset_data()
+			that.v.update(that.v.root)
 			that.set_puzzle();
 		})
 		document.getElementById("reset-puzzle-dialog").addEventListener("click", ()=>{
@@ -161,27 +167,31 @@ function Condition_AI() {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({ black: black, white: white, win_in_n: Number(win_in_n) })
-		}).then($('.headertext h1').text('The solver has received the puzzle, finding solutions ...').css('color', '#000000'))
+		}).then(document.getElementById("title text").getElementsByTagName("h1")[0].textContent = 'The solver has received the puzzle, finding solutions ...')
 			.then(data => {
 				// 设置服务器端事件监听器来接收结果
 				const eventSource = new EventSource('http://127.0.0.1:1112/result');
 				eventSource.onmessage = function(event) {
 					const resultData = JSON.parse(event.data);
 					that.solver.solutions = resultData["result"][0];
-					$('.headertext h1').text('Totally found ' + String((resultData["result"][0]["-1"]).length) + ' solutions in ' + String(resultData["result"][1]) + ' seconds').css('color', '#000000');
+					document.getElementById("title text").getElementsByTagName("h1")[0].textContent = 'Recommand moves of ' + (black.length != white.length ? 'white' : 'black')
+					document.getElementById("result text").getElementsByTagName("h1")[0].textContent = 'Totally found ' + String((resultData["result"][0]["-1"]).length) + ' solutions in ' + String(resultData["result"][1]) + ' seconds'
 					that.b.highlight_tiles();
 					that.candidates = that.solver.init_branch();
-					for (var i = 0; i < that.candidates.length; i++){
+					for (let i = 0; i < that.candidates.length; i++){
 						that.b.add_sol_piece(that.candidates[i], -1 - (black.length != white.length))
 						that.b.show_last_move(that.candidates[i], -1 - (black.length != white.length));
 					};
 					that.p.color = Number(black.length != white.length)
 					that.player_turn()
-					eventSource.close(); // 接收到结果后关闭连接
+					that.v.read_data(resultData["result"][0], black, white, that.p.color)
+					that.v.update(that.v.root)
+
+					eventSource.close();
 				};
 				eventSource.onerror = function(event) {
 					console.error('Error with EventSource:', event);
-					eventSource.close(); // 出现错误时关闭连接
+					eventSource.close();
 				};
 			})
 			.catch(error => {

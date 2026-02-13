@@ -126,6 +126,74 @@
             border-radius: 6px;
         }
 
+        /* Center-crop canvas */
+        #stimulus-container canvas {
+            border-radius: 6px;
+            display: block;
+        }
+
+        /* Center-crop wrapper for video: fixed 1000x1000 window */
+        .crop-wrapper {
+            width: 1000px;
+            height: 1000px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .crop-wrapper video {
+            position: absolute;
+            /* these get set by JS based on actual video dimensions */
+            max-width: none !important;
+            max-height: none !important;
+            border-radius: 0;
+        }
+
+        .view-mode-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .view-mode-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .toggle-btns {
+            display: flex;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .toggle-btns input[type="radio"] {
+            display: none;
+        }
+
+        .toggle-btns label {
+            padding: 0.4rem 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #555;
+            background: #fafafa;
+            cursor: pointer;
+            border-right: 1px solid #ccc;
+            transition: background 0.15s, color 0.15s;
+            user-select: none;
+        }
+
+        .toggle-btns label:last-of-type {
+            border-right: none;
+        }
+
+        .toggle-btns input[type="radio"]:checked + label {
+            background: #4a6cf7;
+            color: #fff;
+        }
+
         .not-found {
             font-size: 1.1rem;
             color: #999;
@@ -188,6 +256,16 @@
             </select>
         </div>
 
+        <div class="control-group">
+            <label>View Mode</label>
+            <div class="toggle-btns">
+                <input type="radio" name="view-mode" id="mode-full" value="full" checked>
+                <label for="mode-full">Full Image</label>
+                <input type="radio" name="view-mode" id="mode-center" value="center">
+                <label for="mode-center">Center 1000×1000</label>
+            </div>
+        </div>
+
         <div class="btn-row">
             <button id="show-btn">Show Stimuli</button>
         </div>
@@ -199,12 +277,66 @@
     </div>
 
     <script>
+        function getViewMode() {
+            return document.querySelector('input[name="view-mode"]:checked').value;
+        }
+
+        var CROP = 1000;
+
+        // For images: draw the center 600x600 onto a canvas
+        function showImageCropped(imgEl, container) {
+            var w = imgEl.naturalWidth;
+            var h = imgEl.naturalHeight;
+            var canvas = document.createElement('canvas');
+            canvas.width = CROP;
+            canvas.height = CROP;
+            var ctx = canvas.getContext('2d');
+            // Source rect: center crop of the original image
+            var sx = Math.max(0, (w - CROP) / 2);
+            var sy = Math.max(0, (h - CROP) / 2);
+            var sw = Math.min(w, CROP);
+            var sh = Math.min(h, CROP);
+            // Destination: if image is smaller than 600, center it on the canvas
+            var dx = Math.max(0, (CROP - w) / 2);
+            var dy = Math.max(0, (CROP - h) / 2);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, CROP, CROP);
+            ctx.drawImage(imgEl, sx, sy, sw, sh, dx, dy, sw, sh);
+            container.innerHTML = '';
+            container.appendChild(canvas);
+        }
+
+        // For videos: wrap in a 600x600 clipping div, position video so center is visible
+        function showVideoCropped(videoEl, container) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'crop-wrapper';
+
+            videoEl.addEventListener('loadedmetadata', function () {
+                var vw = videoEl.videoWidth;
+                var vh = videoEl.videoHeight;
+                // Position the video so its center aligns with the wrapper center
+                videoEl.style.width = vw + 'px';
+                videoEl.style.height = vh + 'px';
+                videoEl.style.left = ((CROP - vw) / 2) + 'px';
+                videoEl.style.top = ((CROP - vh) / 2) + 'px';
+            });
+
+            wrapper.appendChild(videoEl);
+            container.innerHTML = '';
+            container.appendChild(wrapper);
+        }
+
+        function showNotFound(container, filename) {
+            container.innerHTML = '<div class="not-found">No such stimuli.<br><small>' + filename + ' not found in data/</small></div>';
+        }
+
         document.getElementById('show-btn').addEventListener('click', function () {
             var noise = document.getElementById('sel-noise').value;
             var jitter = document.getElementById('sel-jitter').value;
             var blur = document.getElementById('sel-blur').value;
             var res = document.getElementById('sel-res').value;
             var fs = document.getElementById('sel-fs').value;
+            var viewMode = getViewMode();
 
             var isVideo = jitter !== 'wojitter';
             var ext = isVideo ? '.mp4' : '.png';
@@ -215,7 +347,8 @@
 
             var container = document.getElementById('stimulus-container');
             var info = document.getElementById('filename-info');
-            info.textContent = 'Looking for: ' + filename;
+            var modeLabel = viewMode === 'center' ? '  (center 1000×1000 crop)' : '  (full)';
+            info.textContent = 'Looking for: ' + filename + modeLabel;
             container.innerHTML = '';
 
             if (isVideo) {
@@ -229,28 +362,50 @@
                 source.type = 'video/mp4';
                 video.appendChild(source);
                 video.onerror = function () {
-                    container.innerHTML = '<div class="not-found">No such stimuli.<br><small>' + filename + ' not found in data/</small></div>';
+                    showNotFound(container, filename);
                 };
-                container.appendChild(video);
+                if (viewMode === 'center') {
+                    showVideoCropped(video, container);
+                } else {
+                    container.appendChild(video);
+                }
             } else {
-                var img = document.createElement('img');
-                img.src = path;
-                img.alt = 'Stimulus: ' + filename;
-                img.onerror = function () {
+                // Use a hidden loader image to detect load/error, then display
+                var loader = new Image();
+                loader.onload = function () {
+                    if (viewMode === 'center') {
+                        showImageCropped(loader, container);
+                    } else {
+                        var img = document.createElement('img');
+                        img.src = loader.src;
+                        img.alt = 'Stimulus';
+                        container.innerHTML = '';
+                        container.appendChild(img);
+                    }
+                };
+                loader.onerror = function () {
                     // Try the double-underscore variant (wojitter__blur pattern)
                     var altFilename = noise + '_' + jitter + '__' + blur + '_' + res + '_' + fs + ext;
                     var altPath = 'data/' + altFilename;
-                    var img2 = document.createElement('img');
-                    img2.src = altPath;
-                    img2.alt = 'Stimulus: ' + altFilename;
-                    img2.onerror = function () {
-                        container.innerHTML = '<div class="not-found">No such stimuli.<br><small>' + filename + ' not found in data/</small></div>';
+                    var loader2 = new Image();
+                    loader2.onload = function () {
+                        if (viewMode === 'center') {
+                            showImageCropped(loader2, container);
+                        } else {
+                            var img2 = document.createElement('img');
+                            img2.src = loader2.src;
+                            img2.alt = 'Stimulus';
+                            container.innerHTML = '';
+                            container.appendChild(img2);
+                        }
+                        info.textContent = 'Looking for: ' + altFilename + modeLabel;
                     };
-                    container.innerHTML = '';
-                    container.appendChild(img2);
-                    info.textContent = 'Looking for: ' + altFilename;
+                    loader2.onerror = function () {
+                        showNotFound(container, filename);
+                    };
+                    loader2.src = altPath;
                 };
-                container.appendChild(img);
+                loader.src = path;
             }
         });
     </script>

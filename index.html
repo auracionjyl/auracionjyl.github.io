@@ -15,50 +15,54 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #f5f7fa;
             color: #333;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .page-layout {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Left sidebar with controls */
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            background: #fff;
+            border-right: 1px solid #e0e0e0;
+            padding: 1.2rem 1rem;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 2rem 1rem;
+            gap: 0.9rem;
+            overflow-y: auto;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
+        .sidebar h1 {
+            font-size: 1.2rem;
             color: #1a1a2e;
-        }
-
-        .controls {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            padding: 1.5rem 2rem;
-            max-width: 700px;
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem 2rem;
+            margin-bottom: 0.2rem;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
+            gap: 0.25rem;
         }
 
         .control-group label {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #555;
         }
 
         .control-group select {
-            padding: 0.45rem 0.6rem;
+            padding: 0.4rem 0.5rem;
             border: 1px solid #ccc;
             border-radius: 6px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             background: #fafafa;
             cursor: pointer;
+            width: 100%;
         }
 
         .control-group select:focus {
@@ -67,16 +71,43 @@
             box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
         }
 
-        .btn-row {
-            grid-column: 1 / -1;
+        .toggle-btns {
             display: flex;
-            justify-content: center;
-            margin-top: 0.5rem;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .toggle-btns input[type="radio"] {
+            display: none;
+        }
+
+        .toggle-btns label {
+            flex: 1;
+            padding: 0.35rem 0.5rem;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #555;
+            background: #fafafa;
+            cursor: pointer;
+            border-right: 1px solid #ccc;
+            transition: background 0.15s, color 0.15s;
+            user-select: none;
+            text-align: center;
+        }
+
+        .toggle-btns label:last-of-type {
+            border-right: none;
+        }
+
+        .toggle-btns input[type="radio"]:checked + label {
+            background: #4a6cf7;
+            color: #fff;
         }
 
         #show-btn {
-            padding: 0.6rem 2rem;
-            font-size: 1rem;
+            padding: 0.55rem 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: #fff;
             background: #4a6cf7;
@@ -84,25 +115,28 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.2s;
+            width: 100%;
+            margin-top: 0.3rem;
         }
 
         #show-btn:hover {
             background: #3a5ae0;
         }
 
+        /* Right display area */
         .display-area {
-            margin-top: 2rem;
-            max-width: 900px;
-            width: 100%;
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 1rem;
+            overflow: auto;
         }
 
         #filename-info {
             font-size: 0.85rem;
             color: #888;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             word-break: break-all;
             text-align: center;
         }
@@ -111,8 +145,7 @@
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            padding: 1.5rem;
-            width: 100%;
+            padding: 1rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -122,7 +155,7 @@
         #stimulus-container img,
         #stimulus-container video {
             max-width: 100%;
-            max-height: 70vh;
+            max-height: calc(100vh - 100px);
             border-radius: 6px;
         }
 
@@ -144,54 +177,9 @@
 
         .crop-wrapper video {
             position: absolute;
-            /* these get set by JS based on actual video dimensions */
             max-width: none !important;
             max-height: none !important;
             border-radius: 0;
-        }
-
-        .view-mode-group {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        .view-mode-group label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        .toggle-btns {
-            display: flex;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid #ccc;
-        }
-
-        .toggle-btns input[type="radio"] {
-            display: none;
-        }
-
-        .toggle-btns label {
-            padding: 0.4rem 0.9rem;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #555;
-            background: #fafafa;
-            cursor: pointer;
-            border-right: 1px solid #ccc;
-            transition: background 0.15s, color 0.15s;
-            user-select: none;
-        }
-
-        .toggle-btns label:last-of-type {
-            border-right: none;
-        }
-
-        .toggle-btns input[type="radio"]:checked + label {
-            background: #4a6cf7;
-            color: #fff;
         }
 
         .not-found {
@@ -201,79 +189,97 @@
             padding: 2rem;
         }
 
-        @media (max-width: 500px) {
-            .controls {
-                grid-template-columns: 1fr;
+        /* Responsive: stack on narrow screens */
+        @media (max-width: 700px) {
+            .page-layout {
+                flex-direction: column;
+                height: auto;
+            }
+
+            body {
+                height: auto;
+                overflow: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: unset;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .display-area {
+                min-height: 50vh;
             }
         }
     </style>
 </head>
 <body>
-    <h1>Stimuli Viewer</h1>
+    <div class="page-layout">
+        <div class="sidebar">
+            <h1>Stimuli Viewer</h1>
 
-    <div class="controls">
-        <div class="control-group">
-            <label for="sel-noise">Noise</label>
-            <select id="sel-noise">
-                <option value="wonoise">Without Noise</option>
-                <option value="noise">With Noise</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label for="sel-jitter">Jitter</label>
-            <select id="sel-jitter">
-                <option value="wojitter">No Jitter</option>
-                <option value="jitter1">Jitter 1</option>
-                <option value="jitter2">Jitter 2</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label for="sel-blur">Blur</label>
-            <select id="sel-blur">
-                <option value="woblur">Without Blur</option>
-                <option value="blur">With Blur</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label for="sel-res">Resolution</label>
-            <select id="sel-res">
-                <option value="res30">30 ppd</option>
-                <option value="res45">45 ppd</option>
-                <option value="res90">90 ppd</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label for="sel-fs">Font Size</label>
-            <select id="sel-fs">
-                <option value="fs12">12 arcmin</option>
-                <option value="fs15">15 arcmin</option>
-                <option value="fs18">18 arcmin</option>
-                <option value="fs24">24 arcmin</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label>View Mode</label>
-            <div class="toggle-btns">
-                <input type="radio" name="view-mode" id="mode-full" value="full" checked>
-                <label for="mode-full">Full Image</label>
-                <input type="radio" name="view-mode" id="mode-center" value="center">
-                <label for="mode-center">Center 1000×1000</label>
+            <div class="control-group">
+                <label for="sel-noise">Noise</label>
+                <select id="sel-noise">
+                    <option value="wonoise">Without Noise</option>
+                    <option value="noise">With Noise</option>
+                </select>
             </div>
-        </div>
 
-        <div class="btn-row">
+            <div class="control-group">
+                <label for="sel-jitter">Jitter</label>
+                <select id="sel-jitter">
+                    <option value="wojitter">No Jitter</option>
+                    <option value="jitter1">Jitter 1</option>
+                    <option value="jitter2">Jitter 2</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="sel-blur">Blur</label>
+                <select id="sel-blur">
+                    <option value="woblur">Without Blur</option>
+                    <option value="blur">With Blur</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="sel-res">Resolution</label>
+                <select id="sel-res">
+                    <option value="res30">30 ppd</option>
+                    <option value="res45">45 ppd</option>
+                    <option value="res90">90 ppd</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="sel-fs">Font Size</label>
+                <select id="sel-fs">
+                    <option value="fs12">12 arcmin</option>
+                    <option value="fs15">15 arcmin</option>
+                    <option value="fs18">18 arcmin</option>
+                    <option value="fs24">24 arcmin</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>View Mode</label>
+                <div class="toggle-btns">
+                    <input type="radio" name="view-mode" id="mode-full" value="full" checked>
+                    <label for="mode-full">Full Image</label>
+                    <input type="radio" name="view-mode" id="mode-center" value="center">
+                    <label for="mode-center">Center 1000&times;1000</label>
+                </div>
+            </div>
+
             <button id="show-btn">Show Stimuli</button>
         </div>
-    </div>
 
-    <div class="display-area">
-        <div id="filename-info"></div>
-        <div id="stimulus-container"></div>
+        <div class="display-area">
+            <div id="filename-info"></div>
+            <div id="stimulus-container"></div>
+        </div>
     </div>
 
     <script>
@@ -283,7 +289,7 @@
 
         var CROP = 1000;
 
-        // For images: draw the center 600x600 onto a canvas
+        // For images: draw the center 1000x1000 onto a canvas
         function showImageCropped(imgEl, container) {
             var w = imgEl.naturalWidth;
             var h = imgEl.naturalHeight;
@@ -291,12 +297,10 @@
             canvas.width = CROP;
             canvas.height = CROP;
             var ctx = canvas.getContext('2d');
-            // Source rect: center crop of the original image
             var sx = Math.max(0, (w - CROP) / 2);
             var sy = Math.max(0, (h - CROP) / 2);
             var sw = Math.min(w, CROP);
             var sh = Math.min(h, CROP);
-            // Destination: if image is smaller than 600, center it on the canvas
             var dx = Math.max(0, (CROP - w) / 2);
             var dy = Math.max(0, (CROP - h) / 2);
             ctx.fillStyle = '#000';
@@ -306,7 +310,7 @@
             container.appendChild(canvas);
         }
 
-        // For videos: wrap in a 600x600 clipping div, position video so center is visible
+        // For videos: wrap in a 1000x1000 clipping div, position video so center is visible
         function showVideoCropped(videoEl, container) {
             var wrapper = document.createElement('div');
             wrapper.className = 'crop-wrapper';
@@ -314,7 +318,6 @@
             videoEl.addEventListener('loadedmetadata', function () {
                 var vw = videoEl.videoWidth;
                 var vh = videoEl.videoHeight;
-                // Position the video so its center aligns with the wrapper center
                 videoEl.style.width = vw + 'px';
                 videoEl.style.height = vh + 'px';
                 videoEl.style.left = ((CROP - vw) / 2) + 'px';
@@ -341,13 +344,12 @@
             var isVideo = jitter !== 'wojitter';
             var ext = isVideo ? '.mp4' : '.png';
 
-            // Build filename: {noise}_{jitter}_{blur}_{res}_{fs}.ext
             var filename = noise + '_' + jitter + '_' + blur + '_' + res + '_' + fs + ext;
             var path = 'data/' + filename;
 
             var container = document.getElementById('stimulus-container');
             var info = document.getElementById('filename-info');
-            var modeLabel = viewMode === 'center' ? '  (center 1000×1000 crop)' : '  (full)';
+            var modeLabel = viewMode === 'center' ? '  (center 1000\u00d71000 crop)' : '  (full)';
             info.textContent = 'Looking for: ' + filename + modeLabel;
             container.innerHTML = '';
 
@@ -370,7 +372,6 @@
                     container.appendChild(video);
                 }
             } else {
-                // Use a hidden loader image to detect load/error, then display
                 var loader = new Image();
                 loader.onload = function () {
                     if (viewMode === 'center') {
@@ -384,7 +385,6 @@
                     }
                 };
                 loader.onerror = function () {
-                    // Try the double-underscore variant (wojitter__blur pattern)
                     var altFilename = noise + '_' + jitter + '__' + blur + '_' + res + '_' + fs + ext;
                     var altPath = 'data/' + altFilename;
                     var loader2 = new Image();

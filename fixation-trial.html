@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixation Trial — Questionnaire</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .sidebar-header h1 { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+        .sidebar-header p  { font-size: 0.72rem; color: #94a3b8; margin-top: 0.15rem; }
+
+        /* Step list */
+        .step-list {
+            padding: 0.75rem 0.5rem;
+            flex: 1;
+        }
+        .step-list-label {
+            font-size: 0.67rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            padding: 0 0.5rem;
+            margin-bottom: 0.4rem;
+        }
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.55rem 0.5rem;
+            border-radius: 7px;
+            cursor: default;
+            transition: background 0.12s;
+        }
+        .step-item.done  { cursor: pointer; }
+        .step-item.done:hover { background: #f1f5f9; }
+        .step-item.active { background: #eef1ff; }
+
+        .step-num {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700;
+            flex-shrink: 0;
+            border: 2px solid #cbd5e1;
+            color: #94a3b8;
+            background: #fff;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+        }
+        .step-item.done   .step-num { border-color: #22c55e; background: #22c55e; color: #fff; }
+        .step-item.active .step-num { border-color: #4a6cf7; background: #4a6cf7; color: #fff; }
+
+        .step-info { flex: 1; min-width: 0; }
+        .step-name { font-size: 0.8rem; font-weight: 600; color: #64748b; }
+        .step-item.active .step-name { color: #1e293b; }
+        .step-item.done   .step-name { color: #475569; }
+        .step-desc { font-size: 0.68rem; color: #94a3b8; }
+
+        .sidebar-footer {
+            padding: 0.75rem 1rem;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        /* ── MAIN ── */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Progress bar */
+        .progress-track { height: 3px; background: #e2e8f0; flex-shrink: 0; }
+        .progress-fill  { height: 100%; background: #4a6cf7; transition: width 0.35s ease; }
+
+        /* Pages */
+        .pages { flex: 1; overflow-y: auto; }
+
+        .page {
+            display: none;
+            padding: 2rem;
+            min-height: 100%;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .page.active { display: flex; }
+
+        .page-header h2 { font-size: 1.12rem; font-weight: 700; color: #1e293b; }
+        .page-header p  { font-size: 0.82rem; color: #64748b; margin-top: 0.25rem; }
+
+        /* Form card */
+        .form-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem 1.25rem;
+        }
+        .form-card.single-col { grid-template-columns: 1fr; }
+
+        /* Fields */
+        .field { display: flex; flex-direction: column; gap: 0.28rem; }
+        .field.full-width { grid-column: 1 / -1; }
+
+        .field > label {
+            font-size: 0.77rem;
+            font-weight: 600;
+            color: #475569;
+            display: flex;
+            align-items: baseline;
+            gap: 0.3rem;
+        }
+        .optional { font-size: 0.67rem; font-weight: 400; color: #94a3b8; font-style: italic; }
+
+        .field input[type="text"],
+        .field input[type="number"],
+        .field select,
+        .field textarea {
+            padding: 0.44rem 0.6rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 0.84rem;
+            color: #1e293b;
+            background: #fafafa;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            font-family: inherit;
+            width: 100%;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 2.5px rgba(74, 108, 247, 0.15);
+            background: #fff;
+        }
+        .field textarea { resize: vertical; min-height: 68px; }
+
+        .input-row { display: flex; gap: 0.4rem; }
+        .input-row input  { flex: 1; min-width: 0; }
+        .input-row select { flex-shrink: 0; width: auto; }
+
+        /* Toggle group */
+        .toggle-group {
+            display: flex;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+        .toggle-group input[type="radio"] { display: none; }
+        .toggle-group label {
+            flex: 1;
+            padding: 0.4rem 0.3rem;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #64748b;
+            background: #fafafa;
+            cursor: pointer;
+            text-align: center;
+            border-right: 1px solid #cbd5e1;
+            transition: background 0.15s, color 0.15s;
+            user-select: none;
+        }
+        .toggle-group label:last-of-type { border-right: none; }
+        .toggle-group input[type="radio"]:checked + label {
+            background: #4a6cf7;
+            color: #fff;
+        }
+
+        /* Checkbox row */
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.42rem 0.6rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            background: #fafafa;
+            cursor: pointer;
+            width: fit-content;
+        }
+        .checkbox-row input[type="checkbox"] {
+            width: 14px; height: 14px;
+            cursor: pointer;
+            accent-color: #4a6cf7;
+        }
+        .checkbox-row span { font-size: 0.8rem; color: #475569; user-select: none; }
+
+        /* Color row */
+        .color-row { display: flex; gap: 0.4rem; align-items: stretch; }
+        .color-row input[type="color"] {
+            width: 40px; height: 36px;
+            border: 1px solid #cbd5e1; border-radius: 7px;
+            padding: 2px 3px;
+            background: #fff; cursor: pointer; flex-shrink: 0;
+        }
+        .color-row input[type="text"] { flex: 1; }
+
+        /* px2arcmin unknown wrapper */
+        .unknown-wrapper { display: flex; flex-direction: column; gap: 0.35rem; }
+        .unknown-wrapper .input-row.disabled { opacity: 0.35; pointer-events: none; }
+
+        /* Page navigation */
+        .page-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.25rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.52rem 1.1rem;
+            font-size: 0.84rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.15s, background 0.15s;
+            font-family: inherit;
+        }
+        .btn-primary { background: #4a6cf7; color: #fff; }
+        .btn-primary:hover { opacity: 0.88; }
+        .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+        .btn-ghost {
+            background: transparent; color: #64748b;
+            border: 1px solid #cbd5e1;
+        }
+        .btn-ghost:hover { background: #f1f5f9; }
+        .btn-success { background: #16a34a; color: #fff; }
+        .btn-success:hover { opacity: 0.88; }
+        .btn-success:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        /* Success screen */
+        .success-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 1rem;
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        .success-icon {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: #dcfce7;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+        }
+        .success-title { font-size: 1.3rem; font-weight: 700; color: #1e293b; }
+        .success-sub {
+            font-size: 0.84rem; color: #64748b;
+            max-width: 300px; line-height: 1.65;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 1.5rem; right: 1.5rem;
+            background: #1e293b; color: #fff;
+            padding: 0.58rem 1rem;
+            border-radius: 8px;
+            font-size: 0.81rem; font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            opacity: 0; transform: translateY(6px);
+            transition: opacity 0.22s, transform 0.22s;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        /* Spinner */
+        .spinner {
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 680px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            .sidebar { width: 100%; height: auto; flex-direction: row; flex-wrap: wrap; }
+            .form-card { grid-template-columns: 1fr; }
+            .field.full-width { grid-column: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CONFIGURATION  —  fill in before deploying
+     ═══════════════════════════════════════════════════════════════
+     1. Create a free project at https://supabase.com
+     2. In the SQL editor, run:
+
+        CREATE TABLE public.fixation_trial (
+          id                   uuid        DEFAULT gen_random_uuid() PRIMARY KEY,
+          submitted_at         timestamptz DEFAULT now(),
+          ip_address           text,
+          trial_id             text,
+          mark                 text,
+          mark_size_value      float8,
+          mark_size_unit       text,
+          color                text,
+          raw_data_path        text,
+          processed_data_path  text,
+          scripts_path         text,
+          naming_rules         text,
+          sampling_rate_hz     float8,
+          unit                 text,
+          eye_tracker_type     text,
+          used_badal           boolean,
+          eye_coverage         text,
+          px2arcmin            text,
+          is_myopia            text,
+          population           text,
+          notes                text
+        );
+
+        ALTER TABLE public.fixation_trial ENABLE ROW LEVEL SECURITY;
+
+        -- Public users may only INSERT (no read access)
+        CREATE POLICY "allow_insert"
+          ON public.fixation_trial FOR INSERT WITH CHECK (true);
+
+     3. Copy Project URL and anon/public key from
+        Settings → API  into the variables below.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h1>Fixation Trial</h1>
+        <p>Experiment questionnaire</p>
+    </div>
+
+    <div class="step-list">
+        <div class="step-list-label">Progress</div>
+
+        <div class="step-item active" id="step-1" onclick="jumpToStep(1)">
+            <div class="step-num">1</div>
+            <div class="step-info">
+                <div class="step-name">Fixation Trial</div>
+                <div class="step-desc">Mark, size, color</div>
+            </div>
+        </div>
+
+        <div class="step-item" id="step-2" onclick="jumpToStep(2)">
+            <div class="step-num">2</div>
+            <div class="step-info">
+                <div class="step-name">Path</div>
+                <div class="step-desc">Data directories</div>
+            </div>
+        </div>
+
+        <div class="step-item" id="step-3" onclick="jumpToStep(3)">
+            <div class="step-num">3</div>
+            <div class="step-info">
+                <div class="step-name">Eye-Tracker</div>
+                <div class="step-desc">Device parameters</div>
+            </div>
+        </div>
+
+        <div class="step-item" id="step-4" onclick="jumpToStep(4)">
+            <div class="step-num">4</div>
+            <div class="step-info">
+                <div class="step-name">Subject</div>
+                <div class="step-desc">Population info</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-footer" id="sidebar-status">Step 1 of 4</div>
+    <div style="padding:0.5rem 1rem;border-top:1px solid #e2e8f0;text-align:center;">
+        <a href="fixation-admin.html"
+           style="font-size:0.68rem;color:#94a3b8;text-decoration:none;"
+           onmouseover="this.style.color='#4a6cf7'"
+           onmouseout="this.style.color='#94a3b8'">&#9881; Admin</a>
+    </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+    <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:25%"></div>
+    </div>
+
+    <div class="pages">
+
+        <!-- ── PAGE 1: Fixation Trial ── -->
+        <div class="page active" id="page-1">
+            <div class="page-header">
+                <h2>Fixation Trial</h2>
+                <p>Configure the fixation mark appearance and trial structure.</p>
+            </div>
+
+            <div class="form-card">
+                <div class="field">
+                    <label for="f-trial-id">Fixation Trial ID
+                        <span class="optional">e.g., every N trials</span>
+                    </label>
+                    <input type="text" id="f-trial-id" placeholder="e.g., every 5 trials">
+                </div>
+
+                <div class="field">
+                    <label>Fixation Mark</label>
+                    <div class="toggle-group">
+                        <input type="radio" name="f-mark" id="mark-cross"  value="cross"  checked>
+                        <label for="mark-cross">Cross</label>
+                        <input type="radio" name="f-mark" id="mark-circle" value="circle">
+                        <label for="mark-circle">Circle</label>
+                        <input type="radio" name="f-mark" id="mark-dot"    value="dot">
+                        <label for="mark-dot">Dot</label>
+                        <input type="radio" name="f-mark" id="mark-other"  value="other">
+                        <label for="mark-other">Other</label>
+                    </div>
+                </div>
+
+                <div class="field full-width" id="mark-other-field" style="display:none;">
+                    <label for="f-mark-custom">Custom Mark Description</label>
+                    <input type="text" id="f-mark-custom" placeholder="Describe the custom fixation mark">
+                </div>
+
+                <div class="field">
+                    <label for="f-mark-size">Fixation Mark Size</label>
+                    <div class="input-row">
+                        <input type="number" id="f-mark-size" placeholder="e.g., 0.5" min="0" step="any">
+                        <select id="f-mark-size-unit">
+                            <option value="deg">deg</option>
+                            <option value="arcmin">arcmin</option>
+                            <option value="px">px</option>
+                            <option value="mm">mm</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Fixation Color
+                        <span class="optional">hex / RGB / image path</span>
+                    </label>
+                    <div class="color-row">
+                        <input type="color" id="f-color-picker" value="#000000">
+                        <input type="text"  id="f-color-text"
+                               placeholder="e.g., #000000 · rgb(0,0,0) · image.png">
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-nav">
+                <span></span>
+                <button class="btn btn-primary" onclick="goNext()">Next ›</button>
+            </div>
+        </div>
+
+        <!-- ── PAGE 2: Path ── -->
+        <div class="page" id="page-2">
+            <div class="page-header">
+                <h2>Path</h2>
+                <p>Specify where data files are stored and how they are named.</p>
+            </div>
+
+            <div class="form-card single-col">
+                <div class="field">
+                    <label for="p-raw">Raw Data Path</label>
+                    <input type="text" id="p-raw" placeholder="e.g., /data/raw/">
+                </div>
+
+                <div class="field">
+                    <label for="p-processed">Processed Data Path
+                        <span class="optional">ready to analysis</span>
+                    </label>
+                    <input type="text" id="p-processed" placeholder="e.g., /data/processed/">
+                </div>
+
+                <div class="field">
+                    <label for="p-scripts">Processing Scripts Path
+                        <span class="optional">optional</span>
+                    </label>
+                    <input type="text" id="p-scripts" placeholder="e.g., /scripts/">
+                </div>
+
+                <div class="field">
+                    <label for="p-naming">Naming Rules</label>
+                    <textarea id="p-naming"
+                              placeholder="Describe the file naming convention&#10;e.g., {subject}_{session}_{condition}.csv"></textarea>
+                </div>
+            </div>
+
+            <div class="page-nav">
+                <button class="btn btn-ghost" onclick="goBack()">‹ Back</button>
+                <button class="btn btn-primary" onclick="goNext()">Next ›</button>
+            </div>
+        </div>
+
+        <!-- ── PAGE 3: Eye-Tracker ── -->
+        <div class="page" id="page-3">
+            <div class="page-header">
+                <h2>Eye-Tracker Parameters</h2>
+                <p>Describe the eye-tracking device and recording configuration.</p>
+            </div>
+
+            <div class="form-card">
+                <div class="field">
+                    <label for="et-sr">Sampling Rate</label>
+                    <div class="input-row">
+                        <input type="number" id="et-sr" placeholder="e.g., 1000" min="0" step="1">
+                        <select style="width:58px;"><option value="Hz">Hz</option></select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Unit</label>
+                    <div class="toggle-group">
+                        <input type="radio" name="et-unit" id="unit-deg"    value="degree" checked>
+                        <label for="unit-deg">deg</label>
+                        <input type="radio" name="et-unit" id="unit-arcmin" value="arcmin">
+                        <label for="unit-arcmin">arcmin</label>
+                        <input type="radio" name="et-unit" id="unit-px"     value="pixel">
+                        <label for="unit-px">px</label>
+                        <input type="radio" name="et-unit" id="unit-mm"     value="mm">
+                        <label for="unit-mm">mm</label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Eye-Tracker Type</label>
+                    <div class="toggle-group">
+                        <input type="radio" name="et-type" id="et-dpi"  value="DPI" checked>
+                        <label for="et-dpi">DPI</label>
+                        <input type="radio" name="et-type" id="et-ddpi" value="DDPI">
+                        <label for="et-ddpi">DDPI</label>
+                        <input type="radio" name="et-type" id="et-ao"   value="AO">
+                        <label for="et-ao">AO</label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Used Badal</label>
+                    <div class="toggle-group">
+                        <input type="radio" name="et-badal" id="badal-yes" value="yes">
+                        <label for="badal-yes">Yes</label>
+                        <input type="radio" name="et-badal" id="badal-no"  value="no" checked>
+                        <label for="badal-no">No</label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Monocular / Binocular</label>
+                    <div class="toggle-group">
+                        <input type="radio" name="et-eye" id="eye-mono" value="monocular" checked>
+                        <label for="eye-mono">Monocular</label>
+                        <input type="radio" name="et-eye" id="eye-bino" value="binocular">
+                        <label for="eye-bino">Binocular</label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="et-px2arcmin">px2arcmin
+                        <span class="optional">pixels per arcminute</span>
+                    </label>
+                    <div class="unknown-wrapper">
+                        <div class="input-row" id="px2arcmin-row">
+                            <input type="number" id="et-px2arcmin"
+                                   placeholder="e.g., 2.5" min="0" step="any">
+                        </div>
+                        <label class="checkbox-row">
+                            <input type="checkbox" id="px2arcmin-unknown">
+                            <span>Unknown</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-nav">
+                <button class="btn btn-ghost" onclick="goBack()">‹ Back</button>
+                <button class="btn btn-primary" onclick="goNext()">Next ›</button>
+            </div>
+        </div>
+
+        <!-- ── PAGE 4: Subject ── -->
+        <div class="page" id="page-4">
+            <div class="page-header">
+                <h2>Subject</h2>
+                <p>Describe the subject population for this experiment.</p>
+            </div>
+
+            <div class="form-card">
+                <div class="field">
+                    <label>Is Myopia Subject</label>
+                    <div class="toggle-group">
+                        <input type="radio" name="sub-myopia" id="myopia-yes"   value="yes">
+                        <label for="myopia-yes">Yes</label>
+                        <input type="radio" name="sub-myopia" id="myopia-no"    value="no" checked>
+                        <label for="myopia-no">No</label>
+                        <input type="radio" name="sub-myopia" id="myopia-mixed" value="mixed">
+                        <label for="myopia-mixed">Mixed</label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="sub-population">Population
+                        <span class="optional">e.g., children, aging, patients</span>
+                    </label>
+                    <input type="text" id="sub-population" list="population-list"
+                           placeholder="e.g., children, normal adults, patients">
+                    <datalist id="population-list">
+                        <option value="Children">
+                        <option value="Young adults">
+                        <option value="Normal adults">
+                        <option value="Aging adults">
+                        <option value="Patients">
+                        <option value="Mixed">
+                    </datalist>
+                </div>
+
+                <div class="field full-width">
+                    <label for="sub-notes">Additional Notes
+                        <span class="optional">optional</span>
+                    </label>
+                    <textarea id="sub-notes"
+                              placeholder="Any additional information about the subject group..."></textarea>
+                </div>
+            </div>
+
+            <div class="page-nav">
+                <button class="btn btn-ghost" onclick="goBack()">‹ Back</button>
+                <button class="btn btn-success" id="submit-btn" onclick="submitForm()">
+                    Save &amp; Submit
+                </button>
+            </div>
+        </div>
+
+        <!-- ── SUCCESS SCREEN ── -->
+        <div class="page" id="page-success">
+            <div class="success-screen">
+                <div class="success-icon">&#10003;</div>
+                <div class="success-title">Submitted!</div>
+                <p class="success-sub">
+                    Your response has been saved successfully.<br>
+                    Thank you for completing the questionnaire.
+                </p>
+                <button class="btn btn-primary" onclick="startNew()">
+                    + Submit Another Response
+                </button>
+            </div>
+        </div>
+
+    </div><!-- /pages -->
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIGURATION — change these values before deploying
+   ═══════════════════════════════════════════════════════════ */
+var SUPABASE_URL      = 'YOUR_SUPABASE_URL';       // e.g. https://xxxx.supabase.co
+var SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';  // anon / public key
+var TABLE_NAME        = 'fixation_trial';
+/* ═══════════════════════════════════════════════════════════ */
+
+var DRAFT_KEY    = 'ft-draft-v1';
+var currentPage  = 1;
+var TOTAL        = 4;
+var visited      = new Set([1]);
+
+/* ── Page-field registry ── */
+var PF = {
+    1: {
+        text:   ['f-trial-id','f-mark-custom','f-mark-size','f-mark-size-unit',
+                 'f-color-picker','f-color-text'],
+        radios: ['f-mark'],
+        checks: []
+    },
+    2: {
+        text:   ['p-raw','p-processed','p-scripts','p-naming'],
+        radios: [],
+        checks: []
+    },
+    3: {
+        text:   ['et-sr','et-px2arcmin'],
+        radios: ['et-unit','et-type','et-badal','et-eye'],
+        checks: ['px2arcmin-unknown']
+    },
+    4: {
+        text:   ['sub-population','sub-notes'],
+        radios: ['sub-myopia'],
+        checks: []
+    }
+};
+
+/* ── Navigation ── */
+function goNext() { saveDraft(); if (currentPage < TOTAL) showPage(currentPage + 1); }
+function goBack() { saveDraft(); if (currentPage > 1)     showPage(currentPage - 1); }
+
+function jumpToStep(n) {
+    if (n === currentPage) return;
+    if (!visited.has(n)) return;   // cannot jump ahead
+    saveDraft();
+    showPage(n);
+}
+
+function showPage(n) {
+    document.getElementById('page-' + currentPage).classList.remove('active');
+    currentPage = n;
+    visited.add(n);
+    var el = document.getElementById('page-' + n);
+    if (el) el.classList.add('active');
+    updateSidebar();
+    updateProgress();
+    loadDraft(n);
+    // Scroll to top
+    document.querySelector('.pages').scrollTop = 0;
+}
+
+function updateSidebar() {
+    for (var i = 1; i <= TOTAL; i++) {
+        var el = document.getElementById('step-' + i);
+        if (!el) continue;
+        el.classList.remove('active','done');
+        if (i === currentPage)          el.classList.add('active');
+        else if (visited.has(i))        el.classList.add('done');
+    }
+    document.getElementById('sidebar-status').textContent =
+        'Step ' + currentPage + ' of ' + TOTAL;
+}
+
+function updateProgress() {
+    document.getElementById('progress-fill').style.width =
+        ((currentPage / TOTAL) * 100) + '%';
+}
+
+/* ── Draft: save / load ── */
+function saveDraft() {
+    var draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+    var f = PF[currentPage]; if (!f) return;
+
+    f.text.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) draft[id] = el.value;
+    });
+    f.radios.forEach(function(name) {
+        var r = document.querySelector('input[name="'+name+'"]:checked');
+        draft['r_'+name] = r ? r.value : null;
+    });
+    f.checks.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) draft[id] = el.checked;
+    });
+
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+
+function loadDraft(n) {
+    var draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+    var f = PF[n]; if (!f) return;
+
+    f.text.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && draft[id] !== undefined) el.value = draft[id];
+    });
+    f.radios.forEach(function(name) {
+        var val = draft['r_'+name];
+        if (val) {
+            var r = document.querySelector('input[name="'+name+'"][value="'+val+'"]');
+            if (r) r.checked = true;
+        }
+    });
+    f.checks.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el && draft[id] !== undefined) el.checked = draft[id];
+    });
+
+    // Side-effects
+    if (n === 1) {
+        document.getElementById('mark-other-field').style.display =
+            draft['r_f-mark'] === 'other' ? '' : 'none';
+    }
+    if (n === 3) {
+        document.getElementById('px2arcmin-row')
+            .classList.toggle('disabled', !!draft['px2arcmin-unknown']);
+    }
+}
+
+function gatherAll() {
+    var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+    var markVal = d['r_f-mark'] || 'cross';
+    return {
+        trial_id:            d['f-trial-id']       || null,
+        mark:                markVal === 'other' ? (d['f-mark-custom'] || null) : markVal,
+        mark_size_value:     d['f-mark-size']     ? parseFloat(d['f-mark-size']) : null,
+        mark_size_unit:      d['f-mark-size-unit'] || null,
+        color:               d['f-color-text']    || d['f-color-picker'] || null,
+        raw_data_path:       d['p-raw']           || null,
+        processed_data_path: d['p-processed']     || null,
+        scripts_path:        d['p-scripts']       || null,
+        naming_rules:        d['p-naming']        || null,
+        sampling_rate_hz:    d['et-sr']           ? parseFloat(d['et-sr']) : null,
+        unit:                d['r_et-unit']       || null,
+        eye_tracker_type:    d['r_et-type']       || null,
+        used_badal:          d['r_et-badal']      === 'yes',
+        eye_coverage:        d['r_et-eye']        || null,
+        px2arcmin:           d['px2arcmin-unknown']
+                               ? 'unknown'
+                               : (d['et-px2arcmin'] ? String(parseFloat(d['et-px2arcmin'])) : null),
+        is_myopia:           d['r_sub-myopia']    || null,
+        population:          d['sub-population']  || null,
+        notes:               d['sub-notes']       || null
+    };
+}
+
+/* ── Submit ── */
+async function submitForm() {
+    var btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>&nbsp;Saving\u2026';
+
+    saveDraft();
+    var payload = gatherAll();
+
+    // Resolve client IP
+    try {
+        var r = await fetch('https://api64.ipify.org?format=json');
+        payload.ip_address = (await r.json()).ip;
+    } catch (_) {
+        payload.ip_address = 'unknown';
+    }
+
+    // Insert into Supabase
+    try {
+        var res = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_NAME, {
+            method:  'POST',
+            headers: {
+                'Content-Type':  'application/json',
+                'apikey':         SUPABASE_ANON_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Prefer':        'return=minimal'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + await res.text());
+
+        // Clear draft and show success
+        localStorage.removeItem(DRAFT_KEY);
+        document.getElementById('page-' + currentPage).classList.remove('active');
+        document.getElementById('page-success').classList.add('active');
+        document.getElementById('progress-fill').style.width = '100%';
+        for (var i = 1; i <= TOTAL; i++) {
+            var s = document.getElementById('step-' + i);
+            if (s) { s.classList.remove('active'); s.classList.add('done'); }
+        }
+        document.getElementById('sidebar-status').textContent = 'Submitted \u2713';
+
+    } catch (err) {
+        console.error(err);
+        showToast('Save failed: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = 'Save &amp; Submit';
+    }
+}
+
+/* ── Start fresh ── */
+function startNew() {
+    document.getElementById('page-success').classList.remove('active');
+
+    // Clear all inputs
+    document.querySelectorAll('input[type="text"], input[type="number"], textarea')
+        .forEach(function(el) { el.value = ''; });
+    document.getElementById('f-color-picker').value = '#000000';
+
+    // Reset radios to defaults
+    var defs = {
+        'f-mark':'cross', 'et-unit':'degree', 'et-type':'DPI',
+        'et-badal':'no', 'et-eye':'monocular', 'sub-myopia':'no'
+    };
+    Object.keys(defs).forEach(function(name) {
+        var r = document.querySelector('input[name="'+name+'"][value="'+defs[name]+'"]');
+        if (r) r.checked = true;
+    });
+    document.getElementById('f-mark-size-unit').value = 'deg';
+    document.getElementById('px2arcmin-unknown').checked = false;
+    document.getElementById('px2arcmin-row').classList.remove('disabled');
+    document.getElementById('mark-other-field').style.display = 'none';
+
+    visited      = new Set([1]);
+    currentPage  = 0;
+    showPage(1);
+}
+
+/* ── Color picker ↔ text sync ── */
+document.getElementById('f-color-picker').addEventListener('input', function() {
+    var t = document.getElementById('f-color-text');
+    if (!t.value || /^#[0-9a-fA-F]{3,6}$/.test(t.value.trim())) t.value = this.value;
+});
+document.getElementById('f-color-text').addEventListener('input', function() {
+    var v = this.value.trim();
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) document.getElementById('f-color-picker').value = v;
+});
+
+/* ── Mark "Other" toggle ── */
+document.querySelectorAll('input[name="f-mark"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+        document.getElementById('mark-other-field').style.display =
+            this.value === 'other' ? '' : 'none';
+    });
+});
+
+/* ── px2arcmin unknown ── */
+document.getElementById('px2arcmin-unknown').addEventListener('change', function() {
+    document.getElementById('px2arcmin-row').classList.toggle('disabled', this.checked);
+    if (this.checked) document.getElementById('et-px2arcmin').value = '';
+});
+
+/* ── Toast ── */
+function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(function() { t.classList.remove('show'); }, 3200);
+}
+
+/* ── Restore draft on load ── */
+(function() {
+    var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+    if (Object.keys(d).length) { loadDraft(1); showToast('Draft restored'); }
+})();
+</script>
+</body>
+</html>

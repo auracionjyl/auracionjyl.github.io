@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Fixation Trial</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* ── LOGIN SCREEN ── */
+        .login-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .login-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 2rem 2.25rem;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        }
+
+        .login-icon {
+            width: 44px; height: 44px;
+            border-radius: 10px;
+            background: #eef1ff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .login-card h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .login-card p {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 0.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 0.28rem; margin-bottom: 0.75rem; }
+
+        .field label {
+            font-size: 0.77rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .field input {
+            padding: 0.48rem 0.65rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 0.85rem;
+            color: #1e293b;
+            background: #fafafa;
+            font-family: inherit;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 2.5px rgba(74,108,247,0.15);
+            background: #fff;
+        }
+
+        .login-error {
+            font-size: 0.78rem;
+            color: #e11d48;
+            min-height: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* ── ADMIN DASHBOARD ── */
+        .dashboard { display: none; flex-direction: column; min-height: 100vh; }
+
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .topbar-left h1 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .topbar-left p {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-top: 0.1rem;
+        }
+
+        .topbar-right { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.46rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.15s, background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-primary   { background: #4a6cf7; color: #fff; }
+        .btn-primary:hover { opacity: 0.88; }
+        .btn-secondary { background: #eef1ff; color: #4a6cf7; border: 1.5px solid #c7d2fe; }
+        .btn-secondary:hover { background: #dde4ff; }
+        .btn-ghost     { background: transparent; color: #64748b; border: 1px solid #cbd5e1; }
+        .btn-ghost:hover { background: #f1f5f9; }
+
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Stats bar */
+        .stats-bar {
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            min-width: 140px;
+        }
+
+        .stat-label { font-size: 0.7rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-value { font-size: 1.4rem; font-weight: 700; color: #1e293b; margin-top: 0.1rem; }
+
+        /* Table */
+        .table-wrap {
+            flex: 1;
+            padding: 0 1.5rem 1.5rem;
+            overflow-x: auto;
+        }
+
+        .table-container {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-toolbar {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-input {
+            padding: 0.4rem 0.7rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 0.82rem;
+            font-family: inherit;
+            color: #1e293b;
+            background: #fafafa;
+            width: 220px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 2px rgba(74,108,247,0.15);
+            background: #fff;
+        }
+
+        .row-count {
+            margin-left: auto;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        thead th {
+            padding: 0.6rem 0.85rem;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        thead th:hover { background: #f1f5f9; }
+
+        thead th.sort-asc::after  { content: ' ▲'; font-size: 0.6rem; }
+        thead th.sort-desc::after { content: ' ▼'; font-size: 0.6rem; }
+
+        tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.1s;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f8fafc; }
+
+        td {
+            padding: 0.6rem 0.85rem;
+            color: #334155;
+            white-space: nowrap;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        td.mono { font-family: monospace; font-size: 0.75rem; color: #64748b; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-yes   { background: #dcfce7; color: #16a34a; }
+        .badge-no    { background: #f1f5f9; color: #64748b; }
+        .badge-mixed { background: #fef3c7; color: #d97706; }
+
+        /* Empty / loading */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .empty-state .big { font-size: 2rem; margin-bottom: 0.5rem; }
+
+        /* Spinner */
+        .spinner {
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+        }
+
+        .spinner-dark {
+            border-color: rgba(74,108,247,0.3);
+            border-top-color: #4a6cf7;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 1.5rem; right: 1.5rem;
+            background: #1e293b; color: #fff;
+            padding: 0.58rem 1rem;
+            border-radius: 8px;
+            font-size: 0.81rem; font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            opacity: 0; transform: translateY(6px);
+            transition: opacity 0.22s, transform 0.22s;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ADMIN CONFIGURATION — change these before deploying
+     ═══════════════════════════════════════════════════════════════
+     IMPORTANT: Keep this page URL private. Anyone with the URL
+     and password can download all submission data.
+
+     The service role key bypasses Supabase RLS — never expose it
+     in a publicly linked page.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ── LOGIN ── -->
+<div class="login-wrap" id="login-wrap">
+    <div class="login-card">
+        <div class="login-icon">&#128274;</div>
+        <h1>Admin Access</h1>
+        <p>Fixation Trial Dataset</p>
+
+        <div class="field">
+            <label for="pwd">Password</label>
+            <input type="password" id="pwd" placeholder="Enter admin password"
+                   onkeydown="if(event.key==='Enter') login()">
+        </div>
+
+        <div class="login-error" id="login-error"></div>
+
+        <button class="btn btn-primary" style="width:100%;" onclick="login()">
+            Sign In
+        </button>
+    </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div class="dashboard" id="dashboard">
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>Fixation Trial — Submissions</h1>
+            <p id="last-refresh">Loading&#8230;</p>
+        </div>
+        <div class="topbar-right">
+            <button class="btn btn-ghost" id="refresh-btn" onclick="loadData()">
+                &#8635; Refresh
+            </button>
+            <button class="btn btn-secondary" id="csv-btn" onclick="downloadCSV()">
+                &#8659; Download CSV
+            </button>
+            <button class="btn btn-ghost" onclick="logout()">
+                Sign out
+            </button>
+        </div>
+    </div>
+
+    <div class="stats-bar" id="stats-bar">
+        <div class="stat-card">
+            <div class="stat-label">Total Submissions</div>
+            <div class="stat-value" id="stat-total">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Unique IPs</div>
+            <div class="stat-value" id="stat-ips">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Latest Submission</div>
+            <div class="stat-value" id="stat-latest" style="font-size:0.85rem;padding-top:0.35rem;">—</div>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <div class="table-container">
+            <div class="table-toolbar">
+                <input class="search-input" id="search-input"
+                       type="text" placeholder="Search any field&#8230;"
+                       oninput="filterTable()">
+                <span class="row-count" id="row-count"></span>
+            </div>
+            <div id="table-area">
+                <div class="empty-state">
+                    <div class="big"><span class="spinner spinner-dark"></span></div>
+                    Loading data&#8230;
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIGURATION — change these values before deploying
+   ═══════════════════════════════════════════════════════════ */
+var ADMIN_PASSWORD    = '19970902';
+var SUPABASE_URL      = 'YOUR_SUPABASE_URL';         // e.g. https://xxxx.supabase.co
+var SUPABASE_SVC_KEY  = 'YOUR_SERVICE_ROLE_KEY';     // service role key (bypasses RLS)
+var TABLE_NAME        = 'fixation_trial';
+/* ═══════════════════════════════════════════════════════════ */
+
+var allRows    = [];
+var sortCol    = 'submitted_at';
+var sortDir    = 'desc';
+
+/* ── Login ── */
+function login() {
+    var pwd = document.getElementById('pwd').value;
+    if (pwd === ADMIN_PASSWORD) {
+        document.getElementById('login-wrap').style.display  = 'none';
+        document.getElementById('dashboard').style.display   = 'flex';
+        document.getElementById('login-error').textContent   = '';
+        loadData();
+    } else {
+        document.getElementById('login-error').textContent = 'Incorrect password.';
+        document.getElementById('pwd').value = '';
+        document.getElementById('pwd').focus();
+    }
+}
+
+function logout() {
+    document.getElementById('dashboard').style.display  = 'none';
+    document.getElementById('login-wrap').style.display = 'flex';
+    document.getElementById('pwd').value = '';
+    allRows = [];
+}
+
+/* ── Load data from Supabase ── */
+async function loadData() {
+    var btn = document.getElementById('refresh-btn');
+    btn.innerHTML = '<span class="spinner spinner-dark"></span> Loading';
+    btn.disabled  = true;
+
+    document.getElementById('table-area').innerHTML =
+        '<div class="empty-state"><div class="big"><span class="spinner spinner-dark"></span></div>Loading data\u2026</div>';
+
+    try {
+        // Fetch up to 5000 rows (adjust range header for larger datasets)
+        var res = await fetch(
+            SUPABASE_URL + '/rest/v1/' + TABLE_NAME +
+            '?order=submitted_at.desc&limit=5000', {
+            headers: {
+                'apikey':        SUPABASE_SVC_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_SVC_KEY,
+                'Accept':        'application/json'
+            }
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status + ' — ' + await res.text());
+
+        allRows = await res.json();
+        renderTable(allRows);
+        updateStats(allRows);
+
+        var now = new Date().toLocaleString();
+        document.getElementById('last-refresh').textContent = 'Last refreshed: ' + now;
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('table-area').innerHTML =
+            '<div class="empty-state"><div class="big">&#9888;</div>Failed to load: ' + err.message + '</div>';
+        showToast('Error: ' + err.message);
+    }
+
+    btn.innerHTML = '&#8635; Refresh';
+    btn.disabled  = false;
+}
+
+/* ── Stats ── */
+function updateStats(rows) {
+    document.getElementById('stat-total').textContent = rows.length;
+
+    var ips = new Set(rows.map(function(r) { return r.ip_address; }).filter(Boolean));
+    document.getElementById('stat-ips').textContent = ips.size;
+
+    if (rows.length) {
+        var latest = rows.reduce(function(a, b) {
+            return a.submitted_at > b.submitted_at ? a : b;
+        });
+        document.getElementById('stat-latest').textContent =
+            new Date(latest.submitted_at).toLocaleString();
+    } else {
+        document.getElementById('stat-latest').textContent = '—';
+    }
+}
+
+/* ── Table columns ── */
+var COLS = [
+    { key: 'submitted_at',        label: 'Submitted',     fmt: function(v) { return v ? new Date(v).toLocaleString() : '—'; } },
+    { key: 'ip_address',          label: 'IP',            fmt: null, cls: 'mono' },
+    { key: 'trial_id',            label: 'Trial ID',      fmt: null },
+    { key: 'mark',                label: 'Mark',          fmt: null },
+    { key: 'mark_size_value',     label: 'Size',          fmt: function(v, row) {
+        return v != null ? v + ' ' + (row.mark_size_unit || '') : '—';
+    }},
+    { key: 'color',               label: 'Color',         fmt: null },
+    { key: 'eye_tracker_type',    label: 'ET Type',       fmt: null },
+    { key: 'sampling_rate_hz',    label: 'SR (Hz)',       fmt: null },
+    { key: 'unit',                label: 'Unit',          fmt: null },
+    { key: 'used_badal',          label: 'Badal',         fmt: function(v) {
+        return '<span class="badge '+(v?'badge-yes':'badge-no')+'">'+(v?'Yes':'No')+'</span>';
+    }, html: true },
+    { key: 'eye_coverage',        label: 'Eyes',          fmt: null },
+    { key: 'px2arcmin',           label: 'px2arcmin',     fmt: null },
+    { key: 'is_myopia',           label: 'Myopia',        fmt: function(v) {
+        var cls = v==='yes'?'badge-yes': v==='mixed'?'badge-mixed':'badge-no';
+        return v ? '<span class="badge '+cls+'">'+v+'</span>' : '—';
+    }, html: true },
+    { key: 'population',          label: 'Population',    fmt: null },
+    { key: 'raw_data_path',       label: 'Raw Path',      fmt: null },
+    { key: 'processed_data_path', label: 'Processed Path',fmt: null },
+    { key: 'scripts_path',        label: 'Scripts Path',  fmt: null },
+    { key: 'naming_rules',        label: 'Naming Rules',  fmt: null },
+    { key: 'notes',               label: 'Notes',         fmt: null }
+];
+
+/* ── Render table ── */
+function renderTable(rows) {
+    if (!rows.length) {
+        document.getElementById('table-area').innerHTML =
+            '<div class="empty-state"><div class="big">&#128203;</div>No submissions yet.</div>';
+        document.getElementById('row-count').textContent = '0 rows';
+        return;
+    }
+
+    var html = '<div style="overflow-x:auto;"><table><thead><tr>';
+    COLS.forEach(function(c) {
+        var cls = sortCol === c.key ? ('sort-' + sortDir) : '';
+        html += '<th class="'+cls+'" onclick="sortBy(\''+c.key+'\')">' + c.label + '</th>';
+    });
+    html += '</tr></thead><tbody>';
+
+    rows.forEach(function(row) {
+        html += '<tr>';
+        COLS.forEach(function(c) {
+            var raw = row[c.key];
+            var val;
+            if (c.fmt) {
+                val = c.fmt(raw, row);
+            } else {
+                val = (raw != null && raw !== '') ? String(raw) : '—';
+            }
+            var cls = c.cls ? ' class="'+c.cls+'"' : '';
+            if (c.html) {
+                html += '<td'+cls+'>' + val + '</td>';
+            } else {
+                html += '<td'+cls+' title="'+escHtml(String(raw||''))+'">'+escHtml(val)+'</td>';
+            }
+        });
+        html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    document.getElementById('table-area').innerHTML = html;
+    document.getElementById('row-count').textContent = rows.length + ' row' + (rows.length===1?'':'s');
+}
+
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Sort ── */
+function sortBy(col) {
+    if (sortCol === col) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortCol = col;
+        sortDir = 'asc';
+    }
+    var sorted = allRows.slice().sort(function(a, b) {
+        var va = a[col], vb = b[col];
+        if (va == null) va = '';
+        if (vb == null) vb = '';
+        if (typeof va === 'number') return sortDir==='asc' ? va-vb : vb-va;
+        return sortDir==='asc'
+            ? String(va).localeCompare(String(vb))
+            : String(vb).localeCompare(String(va));
+    });
+    renderTable(applySearch(sorted));
+}
+
+/* ── Filter/search ── */
+function filterTable() {
+    renderTable(applySearch(allRows));
+}
+
+function applySearch(rows) {
+    var q = document.getElementById('search-input').value.toLowerCase().trim();
+    if (!q) return rows;
+    return rows.filter(function(row) {
+        return Object.values(row).some(function(v) {
+            return v != null && String(v).toLowerCase().includes(q);
+        });
+    });
+}
+
+/* ── CSV download ── */
+function downloadCSV() {
+    var rows = applySearch(allRows);
+    if (!rows.length) { showToast('No data to export'); return; }
+
+    var headers = COLS.map(function(c) { return c.key; });
+    var lines   = [headers.join(',')];
+
+    rows.forEach(function(row) {
+        var cells = headers.map(function(h) {
+            var v = row[h];
+            if (v == null) return '';
+            var s = String(v);
+            if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+                s = '"' + s.replace(/"/g, '""') + '"';
+            }
+            return s;
+        });
+        lines.push(cells.join(','));
+    });
+
+    var blob = new Blob([lines.join('\r\n')], { type: 'text/csv' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href   = url;
+    a.download = 'fixation_trial_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('CSV downloaded (' + rows.length + ' rows)');
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>

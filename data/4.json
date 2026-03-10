@@ -1,0 +1,8 @@
+{
+  "ID": 4,
+  "story": "At a minimum, HDTV has twice the linear resolution of standard-definition television (SDTV), thus showing greater detail than either analog television or regular DVD. The technical standards for broadcasting HDTV also handle the 16:9 aspect ratio images without using letterboxing or anamorphic stretching, thus increasing the effective image resolution.",
+  "q1": "HDTV broadcast standards handle 16:9 aspect ratio images by applying letterboxing to preserve image resolution. (True/False?)",
+  "a1": false,
+  "q2": "resolution",
+  "a2": true
+}

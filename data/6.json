@@ -1,0 +1,8 @@
+{
+  "ID": 6,
+  "story": "A HDI below 0.5 is considered to represent \"low development\". All 22 countries in that category are located in Africa. The highest-scoring Sub-Saharan countries, Gabon and South Africa, are ranked 119th and 121st, respectively. Nine countries departed from this category this year and joined the \"medium development\" group.",
+  "q1": "Countries with an HDI below 0.5 are spread across multiple continents. (True/False?)",
+  "a1": false,
+  "q2": "Africa",
+  "a2": true
+}

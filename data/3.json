@@ -1,0 +1,8 @@
+{
+  "ID": 3,
+  "story": "An earthquake emergency relief team of 184 people (consisting of 12 people from the State Seismological Bureau, 150 from the Beijing Military Area Command, and 22 from the Armed Police General Hospital) left Beijing from Nanyuan Airport late May 12 in two military transport planes to travel to Wenchuan County.",
+  "q1": "The 184-person earthquake relief team traveled from Beijing to Wenchuan County by military transport plane. (True/False?)",
+  "a1": true,
+  "q2": "rescue",
+  "a2": false
+}

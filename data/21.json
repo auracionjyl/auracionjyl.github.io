@@ -1,0 +1,8 @@
+{
+  "ID": 21,
+  "story": "LE: Life expectancy at birth\nMYS: Mean years of schooling (Years that a person 25 years-of-age or older has spent in schools)\nEYS: Expected years of schooling (Years that a 5-year-old child will spend in schools throughout his life)\nGNIpc: Gross national income at purchasing power parity per capita",
+  "q1": "In the Human Development Index, GNIpc stands for gross national income measured at purchasing power parity per capita. (True/False?)",
+  "a1": true,
+  "q2": "inequality",
+  "a2": false
+}

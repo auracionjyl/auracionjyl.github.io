@@ -1,0 +1,8 @@
+{
+  "ID": 36,
+  "story": "During encoding, 576 time-domain samples are taken and are transformed to 576 frequency-domain samples.[clarification needed] If there is a transient, 192 samples are taken instead of 576. This is done to limit the temporal spread of quantization noise accompanying the transient. (See psychoacoustics.)",
+  "q1": "During MP3 encoding, a reduced sample count of 192 is used when a transient is detected, in order to limit the temporal spread of quantization noise. (True/False?)",
+  "a1": true,
+  "q2": "transient",
+  "a2": true
+}

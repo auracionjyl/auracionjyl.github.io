@@ -1,0 +1,8 @@
+{
+  "ID": 10,
+  "story": "Some dog breeds have acquired traits through selective breeding that interfere with reproduction. Male French Bulldogs, for instance, are incapable of mounting the female. For many dogs of this breed, the female must be artificially inseminated in order to reproduce.",
+  "q1": "Male French Bulldogs are capable of natural reproduction without human assistance. (True/False?)",
+  "a1": false,
+  "q2": "inseminated",
+  "a2": true
+}

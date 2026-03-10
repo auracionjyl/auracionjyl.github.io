@@ -1,0 +1,8 @@
+{
+  "ID": 38,
+  "story": "The chemical composition of wood varies from species to species, but is approximately 50% carbon, 42% oxygen, 6% hydrogen, 1% nitrogen, and 1% other elements (mainly calcium, potassium, sodium, magnesium, iron, and manganese) by weight. Wood also contains sulfur, chlorine, silicon, phosphorus, and other elements in small quantity.",
+  "q1": "Carbon is the most abundant element in wood by weight, while oxygen accounts for approximately 42% of its composition. (True/False?)",
+  "a1": true,
+  "q2": "carbon",
+  "a2": true
+}

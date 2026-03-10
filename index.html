@@ -123,6 +123,27 @@
             background: #3a5ae0;
         }
 
+        .nav-to-rater {
+            display: block;
+            padding: 0.45rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4a6cf7;
+            background: #eef1ff;
+            border: 1.5px solid #4a6cf7;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            margin-top: 0.2rem;
+        }
+
+        .nav-to-rater:hover {
+            background: #4a6cf7;
+            color: #fff;
+        }
+
         /* Right display area */
         .display-area {
             flex: 1;
@@ -274,6 +295,8 @@
             </div>
 
             <button id="show-btn">Show Stimuli</button>
+
+            <a class="nav-to-rater" href="rating.html">Rate Stimuli Text →</a>
         </div>
 
         <div class="display-area">

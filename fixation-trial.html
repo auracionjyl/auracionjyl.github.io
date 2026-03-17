@@ -473,12 +473,12 @@
 
                 <div class="field">
                     <label>Fixation Color
-                        <span class="optional">hex / RGB / image path</span>
+                        <span class="optional">name / hex / RGB / image path</span>
                     </label>
                     <div class="color-row">
                         <input type="color" id="f-color-picker" value="#000000">
                         <input type="text"  id="f-color-text"
-                               placeholder="e.g., #000000 · rgb(0,0,0) · image.png">
+                               placeholder="e.g., red · #000000 · rgb(0,0,0) · image.png">
                     </div>
                 </div>
             </div>
@@ -738,7 +738,8 @@ function jumpToStep(n) {
 }
 
 function showPage(n) {
-    document.getElementById('page-' + currentPage).classList.remove('active');
+    var prevEl = document.getElementById('page-' + currentPage);
+    if (prevEl) prevEl.classList.remove('active');
     currentPage = n;
     visited.add(n);
     var el = document.getElementById('page-' + n);

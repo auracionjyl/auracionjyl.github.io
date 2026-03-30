@@ -313,6 +313,306 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Intro note */
+        .intro-note {
+            background: #eef3ff;
+            border: 1px solid #c7d6f7;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            color: #334155;
+        }
+        .intro-note strong {
+            color: #1e293b;
+        }
+
+        /* ── Folder browser ── */
+        .folder-browser {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .browser-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #475569;
+        }
+        .browser-header .path-display {
+            flex: 1;
+            font-weight: 400;
+            color: #64748b;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.74rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tree-container {
+            max-height: 280px;
+            overflow-y: auto;
+            padding: 0.4rem 0;
+        }
+        .tree-node {
+            user-select: none;
+        }
+        .tree-row {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.7rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #334155;
+            transition: background 0.1s;
+            border-radius: 0;
+        }
+        .tree-row:hover {
+            background: #f1f5f9;
+        }
+        .tree-row.selected {
+            background: #eef3ff;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        .tree-arrow {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: #94a3b8;
+            flex-shrink: 0;
+            transition: transform 0.15s;
+        }
+        .tree-arrow.expanded {
+            transform: rotate(90deg);
+        }
+        .tree-arrow.empty {
+            visibility: hidden;
+        }
+        .tree-icon {
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .tree-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .tree-file {
+            color: #94a3b8;
+            cursor: default;
+            font-size: 0.75rem;
+        }
+        .tree-file:hover {
+            background: transparent;
+        }
+        .tree-file .tree-label {
+            font-style: italic;
+        }
+        .tree-file.selectable {
+            cursor: pointer;
+            color: #64748b;
+        }
+        .tree-file.selectable:hover {
+            background: #f1f5f9;
+        }
+        .tree-file.selectable.selected {
+            background: #eef3ff;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        .tree-children {
+            display: none;
+        }
+        .tree-children.open {
+            display: block;
+        }
+
+        /* Path assignment buttons */
+        .path-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 0.7rem 1rem;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .btn-assign {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #fff;
+            color: #475569;
+            cursor: pointer;
+            transition: background 0.12s, border-color 0.12s;
+            font-family: inherit;
+        }
+        .btn-assign:hover {
+            background: #eef3ff;
+            border-color: #4a6cf7;
+            color: #4a6cf7;
+        }
+        .btn-assign:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Path list sections */
+        .path-section {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .path-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 0.85rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .path-section-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .path-section-hint {
+            font-size: 0.68rem;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .path-entry-list {
+            min-height: 32px;
+        }
+        .path-entry-empty {
+            padding: 0.7rem 0.85rem;
+            font-size: 0.76rem;
+            color: #cbd5e1;
+            font-style: italic;
+        }
+        .path-entry {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            padding: 0.55rem 0.85rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.1s;
+        }
+        .path-entry:last-child {
+            border-bottom: none;
+        }
+        .path-entry:hover {
+            background: #fafbfe;
+        }
+        .path-entry-top {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .path-entry-icon {
+            font-size: 0.78rem;
+            flex-shrink: 0;
+        }
+        .path-entry-path {
+            flex: 1;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 0.73rem;
+            color: #334155;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .path-entry-delete {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0 0.15rem;
+            line-height: 1;
+            transition: color 0.12s;
+            flex-shrink: 0;
+        }
+        .path-entry-delete:hover {
+            color: #ef4444;
+        }
+        .path-entry-notes {
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 0.72rem;
+            font-family: inherit;
+            color: #475569;
+            background: #fafafa;
+            resize: none;
+            min-height: 28px;
+            transition: border-color 0.15s;
+        }
+        .path-entry-notes:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            background: #fff;
+        }
+        .path-entry-notes::placeholder {
+            color: #cbd5e1;
+        }
+        /* Manual add row */
+        .path-manual-add {
+            display: flex;
+            gap: 0.35rem;
+            padding: 0.45rem 0.85rem;
+            border-top: 1px solid #f1f5f9;
+            background: #fafbfe;
+        }
+        .path-manual-add input {
+            flex: 1;
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 0.72rem;
+            font-family: inherit;
+            color: #475569;
+            background: #fff;
+        }
+        .path-manual-add input:focus {
+            outline: none;
+            border-color: #4a6cf7;
+        }
+        .path-manual-add button {
+            padding: 0.3rem 0.55rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            background: #fff;
+            color: #475569;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
+            transition: background 0.12s, border-color 0.12s;
+        }
+        .path-manual-add button:hover {
+            background: #eef3ff;
+            border-color: #4a6cf7;
+            color: #4a6cf7;
+        }
+
         /* Responsive */
         @media (max-width: 680px) {
             body { flex-direction: column; height: auto; overflow: auto; }
@@ -377,16 +677,16 @@
         <div class="step-item active" id="step-1" onclick="jumpToStep(1)">
             <div class="step-num">1</div>
             <div class="step-info">
-                <div class="step-name">Fixation Trial</div>
-                <div class="step-desc">Mark, size, color</div>
+                <div class="step-name">Path</div>
+                <div class="step-desc">Data directories</div>
             </div>
         </div>
 
         <div class="step-item" id="step-2" onclick="jumpToStep(2)">
             <div class="step-num">2</div>
             <div class="step-info">
-                <div class="step-name">Path</div>
-                <div class="step-desc">Data directories</div>
+                <div class="step-name">Fixation Trial</div>
+                <div class="step-desc">Mark, size, color</div>
             </div>
         </div>
 
@@ -424,8 +724,106 @@
 
     <div class="pages">
 
-        <!-- ── PAGE 1: Fixation Trial ── -->
+        <!-- ── PAGE 1: Path (Folder Browser) ── -->
         <div class="page active" id="page-1">
+            <div class="intro-note">
+                <strong>Dear lab members and alumni,</strong><br>
+                We are currently working on a project that involves analysing eye-tracking data
+                collected across our lab's past experiments. To move forward, we need your help
+                gathering more detailed information about the datasets from your previous projects,
+                particularly those that included <strong>fixation trials</strong>.<br><br>
+                Please take a few minutes to fill out this questionnaire for each relevant dataset
+                you have worked with. Your input is essential for us to properly organise and
+                analyse the data. Thank you for your time and support!
+            </div>
+
+            <div class="page-header">
+                <h2>Path</h2>
+                <p>Browse the lab's project folders and select the directories for your data.
+                   You can also type a path manually if needed.</p>
+            </div>
+
+            <!-- Folder browser -->
+            <div class="folder-browser">
+                <div class="browser-header">
+                    <span>APLab-Projects</span>
+                    <span class="path-display" id="browser-selected-path">Click a folder to select it</span>
+                </div>
+                <div class="tree-container" id="tree-container">
+                    <!-- Tree is rendered by JS -->
+                </div>
+                <div class="path-actions">
+                    <button class="btn-assign" id="assign-raw" onclick="assignPath('raw')" disabled>
+                        Set as Raw Data Path
+                    </button>
+                    <button class="btn-assign" id="assign-processed" onclick="assignPath('processed')" disabled>
+                        Set as Processed Data Path
+                    </button>
+                    <button class="btn-assign" id="assign-scripts" onclick="assignPath('scripts')" disabled>
+                        Set as Scripts Path
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selected paths (multi-entry) -->
+            <div class="path-section" style="margin-bottom:0.75rem;">
+                <div class="path-section-header">
+                    <span class="path-section-title">Raw Data Paths</span>
+                    <span class="path-section-hint">folders only</span>
+                </div>
+                <div class="path-entry-list" id="list-raw">
+                    <div class="path-entry-empty">No paths added yet — select a folder above or type below</div>
+                </div>
+                <div class="path-manual-add">
+                    <input type="text" id="manual-raw" placeholder="Type a path manually, e.g., APLab-Projects/AO/Eyetrace/Database">
+                    <button onclick="manualAdd('raw')">+ Add</button>
+                </div>
+            </div>
+
+            <div class="path-section" style="margin-bottom:0.75rem;">
+                <div class="path-section-header">
+                    <span class="path-section-title">Processed Data Paths</span>
+                    <span class="path-section-hint">folders only</span>
+                </div>
+                <div class="path-entry-list" id="list-processed">
+                    <div class="path-entry-empty">No paths added yet — select a folder above or type below</div>
+                </div>
+                <div class="path-manual-add">
+                    <input type="text" id="manual-processed" placeholder="Type a path manually, e.g., APLab-Projects/AO/Eyetrace/Prelim Data">
+                    <button onclick="manualAdd('processed')">+ Add</button>
+                </div>
+            </div>
+
+            <div class="path-section" style="margin-bottom:0.75rem;">
+                <div class="path-section-header">
+                    <span class="path-section-title">Processing Scripts</span>
+                    <span class="path-section-hint">folders or script files (.m, .py, .cpp ...)</span>
+                </div>
+                <div class="path-entry-list" id="list-scripts">
+                    <div class="path-entry-empty">No paths added yet — select a folder or script file above, or type below</div>
+                </div>
+                <div class="path-manual-add">
+                    <input type="text" id="manual-scripts" placeholder="Type a path manually, e.g., APLab-Projects/AO/ComputerPrograms">
+                    <button onclick="manualAdd('scripts')">+ Add</button>
+                </div>
+            </div>
+
+            <div class="form-card single-col">
+                <div class="field">
+                    <label for="p-naming">Naming Rules</label>
+                    <textarea id="p-naming"
+                              placeholder="Describe the file naming convention&#10;e.g., {subject}_{session}_{condition}.csv"></textarea>
+                </div>
+            </div>
+
+            <div class="page-nav">
+                <span></span>
+                <button class="btn btn-primary" onclick="goNext()">Next ›</button>
+            </div>
+        </div>
+
+        <!-- ── PAGE 2: Fixation Trial ── -->
+        <div class="page" id="page-2">
             <div class="page-header">
                 <h2>Fixation Trial</h2>
                 <p>Configure the fixation mark appearance and trial structure.</p>
@@ -480,46 +878,6 @@
                         <input type="text"  id="f-color-text"
                                placeholder="e.g., red · #000000 · rgb(0,0,0) · image.png">
                     </div>
-                </div>
-            </div>
-
-            <div class="page-nav">
-                <span></span>
-                <button class="btn btn-primary" onclick="goNext()">Next ›</button>
-            </div>
-        </div>
-
-        <!-- ── PAGE 2: Path ── -->
-        <div class="page" id="page-2">
-            <div class="page-header">
-                <h2>Path</h2>
-                <p>Specify where data files are stored and how they are named.</p>
-            </div>
-
-            <div class="form-card single-col">
-                <div class="field">
-                    <label for="p-raw">Raw Data Path</label>
-                    <input type="text" id="p-raw" placeholder="e.g., /data/raw/">
-                </div>
-
-                <div class="field">
-                    <label for="p-processed">Processed Data Path
-                        <span class="optional">ready to analysis</span>
-                    </label>
-                    <input type="text" id="p-processed" placeholder="e.g., /data/processed/">
-                </div>
-
-                <div class="field">
-                    <label for="p-scripts">Processing Scripts Path
-                        <span class="optional">optional</span>
-                    </label>
-                    <input type="text" id="p-scripts" placeholder="e.g., /scripts/">
-                </div>
-
-                <div class="field">
-                    <label for="p-naming">Naming Rules</label>
-                    <textarea id="p-naming"
-                              placeholder="Describe the file naming convention&#10;e.g., {subject}_{session}_{condition}.csv"></textarea>
                 </div>
             </div>
 
@@ -701,17 +1059,26 @@ var currentPage  = 1;
 var TOTAL        = 4;
 var visited      = new Set([1]);
 
+/* ── Script file extensions (selectable for scripts path) ── */
+var SCRIPT_EXTS = new Set([
+    'm','py','cpp','c','h','hpp','java','js','r','sh','bat',
+    'pl','rb','ipynb','jl','go','rs','swift','lua','ps1'
+]);
+
+/* ── Multi-path data store ── */
+var pathEntries = { raw: [], processed: [], scripts: [] };
+
 /* ── Page-field registry ── */
 var PF = {
     1: {
-        text:   ['f-trial-id','f-mark-custom','f-mark-size','f-mark-size-unit',
-                 'f-color-picker','f-color-text'],
-        radios: ['f-mark'],
+        text:   ['p-naming'],
+        radios: [],
         checks: []
     },
     2: {
-        text:   ['p-raw','p-processed','p-scripts','p-naming'],
-        radios: [],
+        text:   ['f-trial-id','f-mark-custom','f-mark-size','f-mark-size-unit',
+                 'f-color-picker','f-color-text'],
+        radios: ['f-mark'],
         checks: []
     },
     3: {
@@ -786,6 +1153,9 @@ function saveDraft() {
         if (el) draft[id] = el.checked;
     });
 
+    // Save multi-path entries (always, regardless of current page)
+    draft._pathEntries = pathEntries;
+
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
 }
 
@@ -811,6 +1181,15 @@ function loadDraft(n) {
 
     // Side-effects
     if (n === 1) {
+        // Restore multi-path entries from draft
+        if (draft._pathEntries) {
+            pathEntries = draft._pathEntries;
+            ['raw','processed','scripts'].forEach(function(slot) {
+                renderPathList(slot);
+            });
+        }
+    }
+    if (n === 2) {
         document.getElementById('mark-other-field').style.display =
             draft['r_f-mark'] === 'other' ? '' : 'none';
     }
@@ -822,6 +1201,7 @@ function loadDraft(n) {
 
 function gatherAll() {
     var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+    var pe = d._pathEntries || pathEntries;
     var markVal = d['r_f-mark'] || 'cross';
     return {
         trial_id:            d['f-trial-id']       || null,
@@ -829,9 +1209,9 @@ function gatherAll() {
         mark_size_value:     d['f-mark-size']     ? parseFloat(d['f-mark-size']) : null,
         mark_size_unit:      d['f-mark-size-unit'] || null,
         color:               d['f-color-text']    || d['f-color-picker'] || null,
-        raw_data_path:       d['p-raw']           || null,
-        processed_data_path: d['p-processed']     || null,
-        scripts_path:        d['p-scripts']       || null,
+        raw_data_path:       pe.raw.length        ? JSON.stringify(pe.raw) : null,
+        processed_data_path: pe.processed.length  ? JSON.stringify(pe.processed) : null,
+        scripts_path:        pe.scripts.length    ? JSON.stringify(pe.scripts) : null,
         naming_rules:        d['p-naming']        || null,
         sampling_rate_hz:    d['et-sr']           ? parseFloat(d['et-sr']) : null,
         unit:                d['r_et-unit']       || null,
@@ -921,6 +1301,10 @@ function startNew() {
     document.getElementById('px2arcmin-row').classList.remove('disabled');
     document.getElementById('mark-other-field').style.display = 'none';
 
+    // Clear multi-path entries
+    pathEntries = { raw: [], processed: [], scripts: [] };
+    ['raw','processed','scripts'].forEach(function(slot) { renderPathList(slot); });
+
     visited      = new Set([1]);
     currentPage  = 0;
     showPage(1);
@@ -959,9 +1343,318 @@ function showToast(msg) {
     t._t = setTimeout(function() { t.classList.remove('show'); }, 3200);
 }
 
+/* ══════════════════════════════════════════
+   FOLDER BROWSER
+   ══════════════════════════════════════════ */
+var FOLDER_TREE = null;     // loaded from folder-tree.json
+var selectedBrowserPath = '';
+
+/* ── Load tree data ── */
+(function loadFolderTree() {
+    fetch('folder-tree.json?v=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            FOLDER_TREE = data;
+            renderTree();
+        })
+        .catch(function(err) {
+            console.warn('Could not load folder-tree.json:', err);
+            document.getElementById('tree-container').innerHTML =
+                '<div style="padding:1rem;color:#94a3b8;font-size:0.8rem;">Folder tree unavailable — please type paths manually below.</div>';
+        });
+})();
+
+/* ── Render tree into DOM (lazy-loading) ── */
+function renderTree() {
+    var container = document.getElementById('tree-container');
+    container.innerHTML = '';
+    renderChildren(container, FOLDER_TREE, 'APLab-Projects', 0);
+}
+
+function renderChildren(parentEl, obj, parentPath, depth) {
+    // Separate folders (value is object) from files (value is null)
+    var folders = [];
+    var files = [];
+    Object.keys(obj).forEach(function(name) {
+        if (obj[name] === null) {
+            files.push(name);
+        } else {
+            folders.push(name);
+        }
+    });
+    folders.sort(function(a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+    files.sort(function(a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+
+    // Render folders first
+    folders.forEach(function(name) {
+        var children = obj[name];
+        var hasChildren = Object.keys(children).length > 0;
+        var fullPath = parentPath + '/' + name;
+
+        var node = document.createElement('div');
+        node.className = 'tree-node';
+
+        var row = document.createElement('div');
+        row.className = 'tree-row';
+        row.style.paddingLeft = (0.7 + depth * 1) + 'rem';
+        row.setAttribute('data-path', fullPath);
+
+        var arrow = document.createElement('span');
+        arrow.className = 'tree-arrow' + (hasChildren ? '' : ' empty');
+        arrow.textContent = '\u25B6';
+        row.appendChild(arrow);
+
+        var icon = document.createElement('span');
+        icon.className = 'tree-icon';
+        icon.textContent = '\uD83D\uDCC1';
+        row.appendChild(icon);
+
+        var label = document.createElement('span');
+        label.className = 'tree-label';
+        label.textContent = name;
+        row.appendChild(label);
+
+        node.appendChild(row);
+
+        var childDiv = null;
+        if (hasChildren) {
+            childDiv = document.createElement('div');
+            childDiv.className = 'tree-children';
+            childDiv._loaded = false;
+            childDiv._data = children;
+            childDiv._path = fullPath;
+            childDiv._depth = depth + 1;
+            node.appendChild(childDiv);
+        }
+
+        row.addEventListener('click', function(e) {
+            e.stopPropagation();
+            selectBrowserPath(fullPath, row);
+            if (hasChildren) {
+                if (!childDiv._loaded) {
+                    renderChildren(childDiv, childDiv._data, childDiv._path, childDiv._depth);
+                    childDiv._loaded = true;
+                }
+                childDiv.classList.toggle('open');
+                arrow.classList.toggle('expanded');
+                icon.textContent = childDiv.classList.contains('open') ? '\uD83D\uDCC2' : '\uD83D\uDCC1';
+            }
+        });
+
+        parentEl.appendChild(node);
+    });
+
+    // Render files after folders
+    files.forEach(function(name) {
+        var fullPath = parentPath + '/' + name;
+        var ext = name.split('.').pop().toLowerCase();
+        var isScript = SCRIPT_EXTS.has(ext);
+
+        var node = document.createElement('div');
+        node.className = 'tree-node';
+
+        var row = document.createElement('div');
+        row.className = 'tree-row tree-file' + (isScript ? ' selectable' : '');
+        row.style.paddingLeft = (0.7 + depth * 1) + 'rem';
+        if (isScript) row.setAttribute('data-path', fullPath);
+        row.setAttribute('data-is-file', 'true');
+
+        var arrow = document.createElement('span');
+        arrow.className = 'tree-arrow empty';
+        arrow.textContent = '\u25B6';
+        row.appendChild(arrow);
+
+        var icon = document.createElement('span');
+        icon.className = 'tree-icon';
+        icon.textContent = getFileIcon(name);
+        row.appendChild(icon);
+
+        var label = document.createElement('span');
+        label.className = 'tree-label';
+        label.textContent = name;
+        row.appendChild(label);
+
+        // Script files are selectable (for scripts path only)
+        if (isScript) {
+            row.addEventListener('click', function(e) {
+                e.stopPropagation();
+                selectBrowserPath(fullPath, row, true);
+            });
+        }
+
+        node.appendChild(row);
+        parentEl.appendChild(node);
+    });
+}
+
+/* ── File icon helper ── */
+function getFileIcon(name) {
+    var ext = name.split('.').pop().toLowerCase();
+    var icons = {
+        m:    '\uD83D\uDCDC',  // MATLAB
+        mat:  '\uD83D\uDCDC',
+        py:   '\uD83D\uDC0D',
+        csv:  '\uD83D\uDCCA',
+        tsv:  '\uD83D\uDCCA',
+        xlsx: '\uD83D\uDCCA',
+        xls:  '\uD83D\uDCCA',
+        pdf:  '\uD83D\uDCC4',
+        doc:  '\uD83D\uDCC4',
+        docx: '\uD83D\uDCC4',
+        txt:  '\uD83D\uDCC4',
+        png:  '\uD83D\uDDBC',
+        jpg:  '\uD83D\uDDBC',
+        jpeg: '\uD83D\uDDBC',
+        tif:  '\uD83D\uDDBC',
+        tiff: '\uD83D\uDDBC',
+        bmp:  '\uD83D\uDDBC',
+        svg:  '\uD83D\uDDBC',
+        zip:  '\uD83D\uDCE6',
+        gz:   '\uD83D\uDCE6',
+        tar:  '\uD83D\uDCE6'
+    };
+    return icons[ext] || '\uD83D\uDCC3';
+}
+
+var selectedIsFile = false;
+
+function selectBrowserPath(path, rowEl, isFile) {
+    // Remove previous selection
+    var prev = document.querySelector('.tree-row.selected');
+    if (prev) prev.classList.remove('selected');
+
+    // Highlight new
+    rowEl.classList.add('selected');
+    selectedBrowserPath = path;
+    selectedIsFile = !!isFile;
+
+    // Update display
+    document.getElementById('browser-selected-path').textContent = path;
+
+    // Enable assign buttons based on selection type
+    // Folders: can be assigned to any slot
+    // Script files: can only be assigned to scripts
+    document.getElementById('assign-raw').disabled = selectedIsFile;
+    document.getElementById('assign-processed').disabled = selectedIsFile;
+    document.getElementById('assign-scripts').disabled = false;
+}
+
+/* ── Multi-path: add / remove / render ── */
+function addPathEntry(slot, path) {
+    if (!path) return;
+    // Avoid duplicates
+    var exists = pathEntries[slot].some(function(e) { return e.path === path; });
+    if (exists) {
+        showToast('Path already added');
+        return;
+    }
+    pathEntries[slot].push({ path: path, notes: '' });
+    renderPathList(slot);
+    saveDraft();
+}
+
+function removePathEntry(slot, index) {
+    pathEntries[slot].splice(index, 1);
+    renderPathList(slot);
+    saveDraft();
+}
+
+function updatePathNotes(slot, index, notes) {
+    pathEntries[slot][index].notes = notes;
+    saveDraft();
+}
+
+function renderPathList(slot) {
+    var list = document.getElementById('list-' + slot);
+    var entries = pathEntries[slot];
+
+    if (entries.length === 0) {
+        var emptyMsg = slot === 'scripts'
+            ? 'No paths added yet \u2014 select a folder or script file above, or type below'
+            : 'No paths added yet \u2014 select a folder above or type below';
+        list.innerHTML = '<div class="path-entry-empty">' + emptyMsg + '</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    entries.forEach(function(entry, i) {
+        var div = document.createElement('div');
+        div.className = 'path-entry';
+
+        // Top row: icon + path + delete
+        var top = document.createElement('div');
+        top.className = 'path-entry-top';
+
+        var icon = document.createElement('span');
+        icon.className = 'path-entry-icon';
+        // Check if it's a file path (has file extension in last segment)
+        var lastSeg = entry.path.split('/').pop();
+        var isFile = lastSeg.indexOf('.') > 0;
+        icon.textContent = isFile ? getFileIcon(lastSeg) : '\uD83D\uDCC1';
+
+        var pathSpan = document.createElement('span');
+        pathSpan.className = 'path-entry-path';
+        pathSpan.textContent = entry.path;
+        pathSpan.title = entry.path;
+
+        var del = document.createElement('button');
+        del.className = 'path-entry-delete';
+        del.innerHTML = '&times;';
+        del.title = 'Remove this path';
+        del.addEventListener('click', (function(slot, idx) {
+            return function() { removePathEntry(slot, idx); };
+        })(slot, i));
+
+        top.appendChild(icon);
+        top.appendChild(pathSpan);
+        top.appendChild(del);
+        div.appendChild(top);
+
+        // Notes textarea
+        var notes = document.createElement('textarea');
+        notes.className = 'path-entry-notes';
+        notes.placeholder = 'Add notes about this path (optional)';
+        notes.value = entry.notes || '';
+        notes.rows = 1;
+        notes.addEventListener('input', (function(slot, idx) {
+            return function() { updatePathNotes(slot, idx, this.value); };
+        })(slot, i));
+
+        div.appendChild(notes);
+        list.appendChild(div);
+    });
+}
+
+/* ── Assign from browser ── */
+function assignPath(slot) {
+    if (!selectedBrowserPath) return;
+    addPathEntry(slot, selectedBrowserPath);
+}
+
+/* ── Manual add ── */
+function manualAdd(slot) {
+    var input = document.getElementById('manual-' + slot);
+    var val = input.value.trim();
+    if (!val) return;
+    addPathEntry(slot, val);
+    input.value = '';
+}
+
+/* ── Enter key for manual add inputs ── */
+['manual-raw','manual-processed','manual-scripts'].forEach(function(id) {
+    var slot = id.replace('manual-', '');
+    document.getElementById(id).addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); manualAdd(slot); }
+    });
+});
+
 /* ── Restore draft on load ── */
 (function() {
     var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+    if (d._pathEntries) {
+        pathEntries = d._pathEntries;
+        ['raw','processed','scripts'].forEach(function(slot) { renderPathList(slot); });
+    }
     if (Object.keys(d).length) { loadDraft(1); showToast('Draft restored'); }
 })();
 </script>

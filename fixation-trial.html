@@ -1802,7 +1802,15 @@ function buildReview() {
     }
     function pathListHtml(arr) {
         if (!arr || !arr.length) return '<span class="review-value empty">—</span>';
-        return '<span class="review-value">' + arr.map(esc).join('<br>') + '</span>';
+        var items = arr.map(function(entry) {
+            if (typeof entry === 'object' && entry !== null) {
+                var line = esc(entry.path || '');
+                if (entry.notes) line += ' <span style="color:#94a3b8;font-size:0.76rem;">(' + esc(entry.notes) + ')</span>';
+                return line;
+            }
+            return esc(entry);
+        });
+        return '<span class="review-value">' + items.join('<br>') + '</span>';
     }
     function row(label, html) {
         return '<div class="review-row"><span class="review-label">' + label + '</span>' + html + '</div>';

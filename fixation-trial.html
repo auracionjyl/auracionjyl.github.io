@@ -228,6 +228,65 @@
         .unknown-wrapper { display: flex; flex-direction: column; gap: 0.35rem; }
         .unknown-wrapper .input-row.disabled { opacity: 0.35; pointer-events: none; }
 
+        /* Trial ID mode chips */
+        .field-hint { font-size: 0.72rem; color: #94a3b8; margin-top: -0.05rem; line-height: 1.5; }
+        .field-note { font-size: 0.72rem; color: #94a3b8; margin-top: 0.25rem; }
+        .mode-chips { display: flex; flex-wrap: wrap; gap: 0.38rem; margin-top: 0.15rem; }
+        .mode-chip {
+            padding: 0.28rem 0.7rem;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 20px;
+            font-size: 0.76rem; font-weight: 500;
+            color: #64748b; background: #fafafa;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s, color 0.15s;
+            font-family: inherit;
+        }
+        .mode-chip:hover  { border-color: #4a6cf7; color: #4a6cf7; background: #eef1ff; }
+        .mode-chip.active { border-color: #4a6cf7; background: #4a6cf7; color: #fff; }
+        .trial-id-sub { display: none; margin-top: 0.45rem; }
+        .trial-id-sub.visible { display: block; }
+        .interval-row { display: flex; align-items: center; gap: 0.5rem; }
+        .interval-row span { font-size: 0.84rem; color: #475569; white-space: nowrap; }
+        .interval-row input { width: 80px; flex-shrink: 0;
+            padding: 0.44rem 0.6rem; border: 1px solid #cbd5e1; border-radius: 7px;
+            font-size: 0.84rem; color: #1e293b; background: #fafafa;
+            transition: border-color 0.15s, box-shadow 0.15s; font-family: inherit; }
+        .interval-row input:focus { outline: none; border-color: #4a6cf7;
+            box-shadow: 0 0 0 2.5px rgba(74,108,247,0.15); background: #fff; }
+        .unknown-info {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 7px;
+            font-size: 0.8rem; color: #16a34a;
+        }
+        /* Escape-hatch chips (Check a script / I don't remember) on every field */
+        .escape-chips { display: flex; flex-wrap: wrap; gap: 0.38rem; margin-top: 0.35rem; }
+        .field-dimmed  { opacity: 0.38; pointer-events: none; }
+
+        /* ── Review page ── */
+        .review-section {
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+        }
+        .review-section-title {
+            font-size: 0.72rem; font-weight: 700; color: #4a6cf7;
+            text-transform: uppercase; letter-spacing: 0.07em;
+            margin-bottom: 0.65rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .review-edit-btn {
+            font-size: 0.7rem; font-weight: 500; color: #4a6cf7; background: none;
+            border: 1px solid #c7d6f7; border-radius: 5px; padding: 0.15rem 0.5rem;
+            cursor: pointer; font-family: inherit; transition: background 0.12s;
+        }
+        .review-edit-btn:hover { background: #eef1ff; }
+        .review-grid { display: flex; flex-direction: column; gap: 0.42rem; }
+        .review-row { display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; align-items: start; font-size: 0.82rem; }
+        .review-label { font-weight: 600; color: #64748b; padding-top: 0.05rem; }
+        .review-value { color: #1e293b; word-break: break-word; }
+        .review-value.empty { color: #94a3b8; font-style: italic; }
+        .review-value.ref { color: #4a6cf7; font-style: italic; }
+
         /* Page navigation */
         .page-nav {
             display: flex;
@@ -705,6 +764,14 @@
                 <div class="step-desc">Population info</div>
             </div>
         </div>
+
+        <div class="step-item" id="step-5" onclick="jumpToStep(5)">
+            <div class="step-num">5</div>
+            <div class="step-info">
+                <div class="step-name">Review</div>
+                <div class="step-desc">Check &amp; submit</div>
+            </div>
+        </div>
     </div>
 
     <div class="sidebar-footer" id="sidebar-status">Step 1 of 4</div>
@@ -741,6 +808,9 @@
                 <h2>Path</h2>
                 <p>Browse the lab's project folders and select the directories for your data.
                    You can also type a path manually if needed.</p>
+            </div>
+            <div class="intro-note">
+                <strong>Note:</strong> All fields are optional — add only the paths and details relevant to your dataset. Use <strong>Check a script</strong> or <strong>I don't remember</strong> on any field you're uncertain about.
             </div>
 
             <!-- Folder browser -->
@@ -811,8 +881,29 @@
             <div class="form-card single-col">
                 <div class="field">
                     <label for="p-naming">Naming Rules</label>
-                    <textarea id="p-naming"
-                              placeholder="Describe the file naming convention&#10;e.g., {subject}_{session}_{condition}.csv"></textarea>
+                    <div id="p-naming-main">
+                        <textarea id="p-naming"
+                                  placeholder="Describe the file naming convention&#10;e.g., {subject}_{session}_{condition}.mat"></textarea>
+                    </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="p-naming" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="p-naming" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="p-naming-sub-script">
+                        <input type="text" id="p-naming-script" placeholder="Script or file where the naming convention is defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="p-naming-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="p-naming-mode" value="">
+                </div>
+            </div>
+
+            <div class="form-card single-col">
+                <div class="field">
+                    <label for="p1-notes">Additional Notes <span class="optional">optional</span></label>
+                    <textarea id="p1-notes" placeholder="Any additional comments about the paths or data structure…"></textarea>
                 </div>
             </div>
 
@@ -828,27 +919,77 @@
                 <h2>Fixation Trial</h2>
                 <p>Configure the fixation mark appearance and trial structure.</p>
             </div>
+            <div class="intro-note">
+                <strong>Note:</strong> All fields are optional. Use <strong>Check a script</strong> to point to a file where a value is defined, or <strong>I don't remember</strong> to leave a field blank.
+            </div>
 
             <div class="form-card">
-                <div class="field">
-                    <label for="f-trial-id">Fixation Trial ID
-                        <span class="optional">e.g., every N trials</span>
-                    </label>
-                    <input type="text" id="f-trial-id" placeholder="e.g., every 5 trials">
+                <div class="field full-width">
+                    <label>Fixation Trial ID <span class="optional">optional — fill in what you remember</span></label>
+                    <p class="field-hint">How were fixation trials placed in your experiment? Pick the option that best describes what you recall.</p>
+                    <div class="mode-chips" id="trial-id-chips">
+                        <button type="button" class="mode-chip" data-mode="interval" onclick="setTrialIdMode('interval')">Every N trials</button>
+                        <button type="button" class="mode-chip" data-mode="specific"  onclick="setTrialIdMode('specific')">Specific IDs</button>
+                        <button type="button" class="mode-chip" data-mode="script"    onclick="setTrialIdMode('script')">Check a script</button>
+                        <button type="button" class="mode-chip" data-mode="unknown"   onclick="setTrialIdMode('unknown')">I don't remember</button>
+                    </div>
+
+                    <!-- Every N trials -->
+                    <div class="trial-id-sub" id="trial-sub-interval">
+                        <div class="interval-row">
+                            <span>Every</span>
+                            <input type="number" id="f-trial-interval" min="1" step="1" placeholder="5">
+                            <span>trials</span>
+                        </div>
+                    </div>
+
+                    <!-- Specific IDs -->
+                    <div class="trial-id-sub" id="trial-sub-specific">
+                        <textarea id="f-trial-specific" placeholder="e.g., 1, 6, 11, 16, 21  —  comma-separated, or one ID per line"></textarea>
+                    </div>
+
+                    <!-- Check a script -->
+                    <div class="trial-id-sub" id="trial-sub-script">
+                        <input type="text" id="f-trial-script" placeholder="e.g., fixation_setup.m  or  scripts/trial_params.py">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+
+                    <!-- I don't remember -->
+                    <div class="trial-id-sub" id="trial-sub-unknown">
+                        <div class="unknown-info">
+                            <span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="f-trial-id-mode" value="">
                 </div>
 
                 <div class="field">
                     <label>Fixation Mark</label>
-                    <div class="toggle-group">
-                        <input type="radio" name="f-mark" id="mark-cross"  value="cross"  checked>
-                        <label for="mark-cross">Cross</label>
-                        <input type="radio" name="f-mark" id="mark-circle" value="circle">
-                        <label for="mark-circle">Circle</label>
-                        <input type="radio" name="f-mark" id="mark-dot"    value="dot">
-                        <label for="mark-dot">Dot</label>
-                        <input type="radio" name="f-mark" id="mark-other"  value="other">
-                        <label for="mark-other">Other</label>
+                    <div id="f-mark-main">
+                        <div class="toggle-group">
+                            <input type="radio" name="f-mark" id="mark-cross"  value="cross"  checked>
+                            <label for="mark-cross">Cross</label>
+                            <input type="radio" name="f-mark" id="mark-circle" value="circle">
+                            <label for="mark-circle">Circle</label>
+                            <input type="radio" name="f-mark" id="mark-dot"    value="dot">
+                            <label for="mark-dot">Dot</label>
+                            <input type="radio" name="f-mark" id="mark-other"  value="other">
+                            <label for="mark-other">Other</label>
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="f-mark" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="f-mark" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="f-mark-sub-script">
+                        <input type="text" id="f-mark-script" placeholder="Script or file where the mark type is defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="f-mark-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="f-mark-mode" value="">
                 </div>
 
                 <div class="field full-width" id="mark-other-field" style="display:none;">
@@ -858,26 +999,61 @@
 
                 <div class="field">
                     <label for="f-mark-size">Fixation Mark Size</label>
-                    <div class="input-row">
-                        <input type="number" id="f-mark-size" placeholder="e.g., 0.5" min="0" step="any">
-                        <select id="f-mark-size-unit">
-                            <option value="deg">deg</option>
-                            <option value="arcmin">arcmin</option>
-                            <option value="px">px</option>
-                            <option value="mm">mm</option>
-                        </select>
+                    <div id="f-mark-size-main">
+                        <div class="input-row">
+                            <input type="number" id="f-mark-size" placeholder="e.g., 0.5" min="0" step="any">
+                            <select id="f-mark-size-unit">
+                                <option value="deg">deg</option>
+                                <option value="arcmin">arcmin</option>
+                                <option value="px">px</option>
+                                <option value="mm">mm</option>
+                            </select>
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="f-mark-size" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="f-mark-size" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="f-mark-size-sub-script">
+                        <input type="text" id="f-mark-size-script" placeholder="Script or file where the mark size is defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="f-mark-size-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="f-mark-size-mode" value="">
                 </div>
 
                 <div class="field">
                     <label>Fixation Color
                         <span class="optional">name / hex / RGB / image path</span>
                     </label>
-                    <div class="color-row">
-                        <input type="color" id="f-color-picker" value="#000000">
-                        <input type="text"  id="f-color-text"
-                               placeholder="e.g., red · #000000 · rgb(0,0,0) · image.png">
+                    <div id="f-color-main">
+                        <div class="color-row">
+                            <input type="color" id="f-color-picker" value="#000000">
+                            <input type="text"  id="f-color-text"
+                                   placeholder="e.g., red · #000000 · rgb(0,0,0) · image.png">
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="f-color" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="f-color" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="f-color-sub-script">
+                        <input type="text" id="f-color-script" placeholder="Script or file where the color is defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="f-color-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="f-color-mode" value="">
+                </div>
+            </div>
+
+            <div class="form-card single-col">
+                <div class="field">
+                    <label for="p2-notes">Additional Notes <span class="optional">optional</span></label>
+                    <textarea id="p2-notes" placeholder="Any additional comments about the fixation setup…"></textarea>
                 </div>
             </div>
 
@@ -893,76 +1069,164 @@
                 <h2>Eye-Tracker Parameters</h2>
                 <p>Describe the eye-tracking device and recording configuration.</p>
             </div>
+            <div class="intro-note">
+                <strong>Note:</strong> All fields are optional. Use <strong>Check a script</strong> to point to a file where a value is defined, or <strong>I don't remember</strong> to leave a field blank.
+            </div>
 
             <div class="form-card">
                 <div class="field">
                     <label for="et-sr">Sampling Rate</label>
-                    <div class="input-row">
-                        <input type="number" id="et-sr" placeholder="e.g., 1000" min="0" step="1">
-                        <select style="width:58px;"><option value="Hz">Hz</option></select>
+                    <div id="et-sr-main">
+                        <div class="input-row">
+                            <input type="number" id="et-sr" placeholder="e.g., 1000" min="0" step="1">
+                            <select style="width:58px;"><option value="Hz">Hz</option></select>
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-sr" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-sr" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="et-sr-sub-script">
+                        <input type="text" id="et-sr-script" placeholder="Script or file where the sampling rate is defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="et-sr-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="et-sr-mode" value="">
                 </div>
 
                 <div class="field">
                     <label>Unit</label>
-                    <div class="toggle-group">
-                        <input type="radio" name="et-unit" id="unit-deg"    value="degree" checked>
-                        <label for="unit-deg">deg</label>
-                        <input type="radio" name="et-unit" id="unit-arcmin" value="arcmin">
-                        <label for="unit-arcmin">arcmin</label>
-                        <input type="radio" name="et-unit" id="unit-px"     value="pixel">
-                        <label for="unit-px">px</label>
-                        <input type="radio" name="et-unit" id="unit-mm"     value="mm">
-                        <label for="unit-mm">mm</label>
+                    <div id="et-unit-main">
+                        <div class="toggle-group">
+                            <input type="radio" name="et-unit" id="unit-deg"    value="degree" checked>
+                            <label for="unit-deg">deg</label>
+                            <input type="radio" name="et-unit" id="unit-arcmin" value="arcmin">
+                            <label for="unit-arcmin">arcmin</label>
+                            <input type="radio" name="et-unit" id="unit-px"     value="pixel">
+                            <label for="unit-px">px</label>
+                            <input type="radio" name="et-unit" id="unit-mm"     value="mm">
+                            <label for="unit-mm">mm</label>
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-unit" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-unit" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="et-unit-sub-script">
+                        <input type="text" id="et-unit-script" placeholder="Script or file where the unit is defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="et-unit-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="et-unit-mode" value="">
                 </div>
 
                 <div class="field">
                     <label>Eye-Tracker Type</label>
-                    <div class="toggle-group">
-                        <input type="radio" name="et-type" id="et-dpi"  value="DPI" checked>
-                        <label for="et-dpi">DPI</label>
-                        <input type="radio" name="et-type" id="et-ddpi" value="DDPI">
-                        <label for="et-ddpi">DDPI</label>
-                        <input type="radio" name="et-type" id="et-ao"   value="AO">
-                        <label for="et-ao">AO</label>
+                    <div id="et-type-main">
+                        <div class="toggle-group">
+                            <input type="radio" name="et-type" id="et-dpi"  value="DPI" checked>
+                            <label for="et-dpi">DPI</label>
+                            <input type="radio" name="et-type" id="et-ddpi" value="DDPI">
+                            <label for="et-ddpi">DDPI</label>
+                            <input type="radio" name="et-type" id="et-ao"   value="AO">
+                            <label for="et-ao">AO</label>
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-type" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-type" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="et-type-sub-script">
+                        <input type="text" id="et-type-script" placeholder="Script or file where the eye-tracker type is specified">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="et-type-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="et-type-mode" value="">
                 </div>
 
                 <div class="field">
                     <label>Used Badal</label>
-                    <div class="toggle-group">
-                        <input type="radio" name="et-badal" id="badal-yes" value="yes">
-                        <label for="badal-yes">Yes</label>
-                        <input type="radio" name="et-badal" id="badal-no"  value="no" checked>
-                        <label for="badal-no">No</label>
+                    <div id="et-badal-main">
+                        <div class="toggle-group">
+                            <input type="radio" name="et-badal" id="badal-yes" value="yes">
+                            <label for="badal-yes">Yes</label>
+                            <input type="radio" name="et-badal" id="badal-no"  value="no" checked>
+                            <label for="badal-no">No</label>
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-badal" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-badal" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="et-badal-sub-script">
+                        <input type="text" id="et-badal-script" placeholder="Script or file where Badal usage is specified">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="et-badal-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="et-badal-mode" value="">
                 </div>
 
                 <div class="field">
                     <label>Monocular / Binocular</label>
-                    <div class="toggle-group">
-                        <input type="radio" name="et-eye" id="eye-mono" value="monocular" checked>
-                        <label for="eye-mono">Monocular</label>
-                        <input type="radio" name="et-eye" id="eye-bino" value="binocular">
-                        <label for="eye-bino">Binocular</label>
+                    <div id="et-eye-main">
+                        <div class="toggle-group">
+                            <input type="radio" name="et-eye" id="eye-mono" value="monocular" checked>
+                            <label for="eye-mono">Monocular</label>
+                            <input type="radio" name="et-eye" id="eye-bino" value="binocular">
+                            <label for="eye-bino">Binocular</label>
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-eye" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-eye" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="et-eye-sub-script">
+                        <input type="text" id="et-eye-script" placeholder="Script or file where eye coverage is specified">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="et-eye-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="et-eye-mode" value="">
                 </div>
 
                 <div class="field">
                     <label for="et-px2arcmin">px2arcmin
                         <span class="optional">pixels per arcminute</span>
                     </label>
-                    <div class="unknown-wrapper">
-                        <div class="input-row" id="px2arcmin-row">
+                    <div id="et-px2arcmin-main">
+                        <div class="input-row">
                             <input type="number" id="et-px2arcmin"
                                    placeholder="e.g., 2.5" min="0" step="any">
                         </div>
-                        <label class="checkbox-row">
-                            <input type="checkbox" id="px2arcmin-unknown">
-                            <span>Unknown</span>
-                        </label>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-px2arcmin" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="et-px2arcmin" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="et-px2arcmin-sub-script">
+                        <input type="text" id="et-px2arcmin-script" placeholder="Script or file where px2arcmin is defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="et-px2arcmin-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="et-px2arcmin-mode" value="">
+                </div>
+            </div>
+
+            <div class="form-card single-col">
+                <div class="field">
+                    <label for="p3-notes">Additional Notes <span class="optional">optional</span></label>
+                    <textarea id="p3-notes" placeholder="Any additional comments about the eye-tracker setup…"></textarea>
                 </div>
             </div>
 
@@ -978,34 +1242,65 @@
                 <h2>Subject</h2>
                 <p>Describe the subject population for this experiment.</p>
             </div>
+            <div class="intro-note">
+                <strong>Note:</strong> All fields are optional. Use <strong>Check a script</strong> to point to a file where a value is defined, or <strong>I don't remember</strong> to leave a field blank.
+            </div>
 
             <div class="form-card">
                 <div class="field">
                     <label>Is Myopia Subject</label>
-                    <div class="toggle-group">
-                        <input type="radio" name="sub-myopia" id="myopia-yes"   value="yes">
-                        <label for="myopia-yes">Yes</label>
-                        <input type="radio" name="sub-myopia" id="myopia-no"    value="no" checked>
-                        <label for="myopia-no">No</label>
-                        <input type="radio" name="sub-myopia" id="myopia-mixed" value="mixed">
-                        <label for="myopia-mixed">Mixed</label>
+                    <div id="sub-myopia-main">
+                        <div class="toggle-group">
+                            <input type="radio" name="sub-myopia" id="myopia-yes"   value="yes">
+                            <label for="myopia-yes">Yes</label>
+                            <input type="radio" name="sub-myopia" id="myopia-no"    value="no" checked>
+                            <label for="myopia-no">No</label>
+                            <input type="radio" name="sub-myopia" id="myopia-mixed" value="mixed">
+                            <label for="myopia-mixed">Mixed</label>
+                        </div>
                     </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="sub-myopia" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="sub-myopia" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="sub-myopia-sub-script">
+                        <input type="text" id="sub-myopia-script" placeholder="Script or file where subject inclusion criteria are defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="sub-myopia-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="sub-myopia-mode" value="">
                 </div>
 
                 <div class="field">
                     <label for="sub-population">Population
                         <span class="optional">e.g., children, aging, patients</span>
                     </label>
-                    <input type="text" id="sub-population" list="population-list"
-                           placeholder="e.g., children, normal adults, patients">
-                    <datalist id="population-list">
-                        <option value="Children">
-                        <option value="Young adults">
-                        <option value="Normal adults">
-                        <option value="Aging adults">
-                        <option value="Patients">
-                        <option value="Mixed">
-                    </datalist>
+                    <div id="sub-population-main">
+                        <input type="text" id="sub-population" list="population-list"
+                               placeholder="e.g., children, normal adults, patients">
+                        <datalist id="population-list">
+                            <option value="Children">
+                            <option value="Young adults">
+                            <option value="Normal adults">
+                            <option value="Aging adults">
+                            <option value="Patients">
+                            <option value="Mixed">
+                        </datalist>
+                    </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="sub-population" data-mode="script">Check a script</button>
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="sub-population" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="sub-population-sub-script">
+                        <input type="text" id="sub-population-script" placeholder="Script or file where population details are defined">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"preprocessing scripts"</em> works too.</p>
+                    </div>
+                    <div class="trial-id-sub" id="sub-population-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.</div>
+                    </div>
+                    <input type="hidden" id="sub-population-mode" value="">
                 </div>
 
                 <div class="field full-width">
@@ -1015,6 +1310,23 @@
                     <textarea id="sub-notes"
                               placeholder="Any additional information about the subject group..."></textarea>
                 </div>
+            </div>
+
+            <div class="page-nav">
+                <button class="btn btn-ghost" onclick="goBack()">‹ Back</button>
+                <button class="btn btn-primary" onclick="goNext()">Review ›</button>
+            </div>
+        </div>
+
+        <!-- ── PAGE 5: Review & Submit ── -->
+        <div class="page" id="page-5">
+            <div class="page-header">
+                <h2>Review &amp; Submit</h2>
+                <p>Check your answers below. Click any section's <strong>edit</strong> button to go back and change something.</p>
+            </div>
+
+            <div id="review-content">
+                <!-- Built by buildReview() when this page is shown -->
             </div>
 
             <div class="page-nav">
@@ -1056,7 +1368,7 @@ var TABLE_NAME        = 'fixation_trial';
 
 var DRAFT_KEY    = 'ft-draft-v1';
 var currentPage  = 1;
-var TOTAL        = 4;
+var TOTAL        = 5;
 var visited      = new Set([1]);
 
 /* ── Script file extensions (selectable for scripts path) ── */
@@ -1071,26 +1383,38 @@ var pathEntries = { raw: [], processed: [], scripts: [] };
 /* ── Page-field registry ── */
 var PF = {
     1: {
-        text:   ['p-naming'],
+        text:   ['p-naming','p-naming-mode','p-naming-script','p1-notes'],
         radios: [],
         checks: []
     },
     2: {
-        text:   ['f-trial-id','f-mark-custom','f-mark-size','f-mark-size-unit',
-                 'f-color-picker','f-color-text'],
+        text:   ['f-trial-id-mode','f-trial-interval','f-trial-specific','f-trial-script',
+                 'f-mark-mode','f-mark-script','f-mark-custom',
+                 'f-mark-size','f-mark-size-mode','f-mark-size-script','f-mark-size-unit',
+                 'f-color-picker','f-color-text','f-color-mode','f-color-script',
+                 'p2-notes'],
         radios: ['f-mark'],
         checks: []
     },
     3: {
-        text:   ['et-sr','et-px2arcmin'],
+        text:   ['et-sr','et-sr-mode','et-sr-script',
+                 'et-unit-mode','et-unit-script',
+                 'et-type-mode','et-type-script',
+                 'et-badal-mode','et-badal-script',
+                 'et-eye-mode','et-eye-script',
+                 'et-px2arcmin','et-px2arcmin-mode','et-px2arcmin-script',
+                 'p3-notes'],
         radios: ['et-unit','et-type','et-badal','et-eye'],
-        checks: ['px2arcmin-unknown']
+        checks: []
     },
     4: {
-        text:   ['sub-population','sub-notes'],
+        text:   ['sub-myopia-mode','sub-myopia-script',
+                 'sub-population','sub-population-mode','sub-population-script',
+                 'sub-notes'],
         radios: ['sub-myopia'],
         checks: []
-    }
+    },
+    5: { text: [], radios: [], checks: [] }
 };
 
 /* ── Navigation ── */
@@ -1181,50 +1505,102 @@ function loadDraft(n) {
 
     // Side-effects
     if (n === 1) {
-        // Restore multi-path entries from draft
         if (draft._pathEntries) {
             pathEntries = draft._pathEntries;
-            ['raw','processed','scripts'].forEach(function(slot) {
-                renderPathList(slot);
-            });
+            ['raw','processed','scripts'].forEach(function(slot) { renderPathList(slot); });
         }
+        if (draft['p-naming-mode']) setFieldMode('p-naming', draft['p-naming-mode'], true);
     }
     if (n === 2) {
         document.getElementById('mark-other-field').style.display =
             draft['r_f-mark'] === 'other' ? '' : 'none';
+        if (draft['f-trial-id-mode']) setTrialIdMode(draft['f-trial-id-mode'], true);
+        ['f-mark','f-mark-size','f-color'].forEach(function(fid) {
+            if (draft[fid + '-mode']) setFieldMode(fid, draft[fid + '-mode'], true);
+        });
     }
     if (n === 3) {
-        document.getElementById('px2arcmin-row')
-            .classList.toggle('disabled', !!draft['px2arcmin-unknown']);
+        ['et-sr','et-unit','et-type','et-badal','et-eye','et-px2arcmin'].forEach(function(fid) {
+            if (draft[fid + '-mode']) setFieldMode(fid, draft[fid + '-mode'], true);
+        });
+    }
+    if (n === 4) {
+        ['sub-myopia','sub-population'].forEach(function(fid) {
+            if (draft[fid + '-mode']) setFieldMode(fid, draft[fid + '-mode'], true);
+        });
+    }
+    if (n === 5) {
+        buildReview();
     }
 }
 
 function gatherAll() {
     var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
     var pe = d._pathEntries || pathEntries;
+    var _refs = []; // script refs for non-text DB columns, appended to notes
+
+    // For text DB columns: return "see: X", null (unknown), or fallback value
+    function txt(fid, fallback) {
+        var mode = d[fid + '-mode'];
+        if (mode === 'script')  return d[fid + '-script'] ? 'see: ' + d[fid + '-script'].trim() : null;
+        if (mode === 'unknown') return null;
+        return fallback;
+    }
+    // For numeric/boolean DB columns: collect script ref into _refs, return null if escape active
+    function esc(fid) { return d[fid + '-mode']; }
+    function refNote(fid, label) {
+        if (esc(fid) === 'script' && d[fid + '-script'])
+            _refs.push(label + ': see ' + d[fid + '-script'].trim());
+    }
+    refNote('f-mark-size', 'mark size');
+    refNote('et-sr',       'sampling rate');
+    refNote('et-badal',    'used badal');
+
     var markVal = d['r_f-mark'] || 'cross';
-    return {
-        trial_id:            d['f-trial-id']       || null,
-        mark:                markVal === 'other' ? (d['f-mark-custom'] || null) : markVal,
-        mark_size_value:     d['f-mark-size']     ? parseFloat(d['f-mark-size']) : null,
-        mark_size_unit:      d['f-mark-size-unit'] || null,
-        color:               d['f-color-text']    || d['f-color-picker'] || null,
-        raw_data_path:       pe.raw.length        ? JSON.stringify(pe.raw) : null,
-        processed_data_path: pe.processed.length  ? JSON.stringify(pe.processed) : null,
-        scripts_path:        pe.scripts.length    ? JSON.stringify(pe.scripts) : null,
-        naming_rules:        d['p-naming']        || null,
-        sampling_rate_hz:    d['et-sr']           ? parseFloat(d['et-sr']) : null,
-        unit:                d['r_et-unit']       || null,
-        eye_tracker_type:    d['r_et-type']       || null,
-        used_badal:          d['r_et-badal']      === 'yes',
-        eye_coverage:        d['r_et-eye']        || null,
-        px2arcmin:           d['px2arcmin-unknown']
-                               ? 'unknown'
-                               : (d['et-px2arcmin'] ? String(parseFloat(d['et-px2arcmin'])) : null),
-        is_myopia:           d['r_sub-myopia']    || null,
-        population:          d['sub-population']  || null,
-        notes:               d['sub-notes']       || null
+
+    var result = {
+        trial_id: (function() {
+            var mode = d['f-trial-id-mode'];
+            if (mode === 'interval') return d['f-trial-interval'] ? 'every ' + parseInt(d['f-trial-interval'],10) + ' trials' : null;
+            if (mode === 'specific') return d['f-trial-specific'] ? d['f-trial-specific'].trim() : null;
+            if (mode === 'script')   return d['f-trial-script']   ? 'see: ' + d['f-trial-script'].trim() : null;
+            return null;
+        })(),
+        mark:            txt('f-mark', markVal === 'other' ? (d['f-mark-custom'] || null) : markVal),
+        mark_size_value: esc('f-mark-size') ? null : (d['f-mark-size'] ? parseFloat(d['f-mark-size']) : null),
+        mark_size_unit:  esc('f-mark-size') ? null : (d['f-mark-size-unit'] || null),
+        color:           txt('f-color', d['f-color-text'] || d['f-color-picker'] || null),
+        raw_data_path:        pe.raw.length       ? JSON.stringify(pe.raw)       : null,
+        processed_data_path:  pe.processed.length ? JSON.stringify(pe.processed) : null,
+        scripts_path:         pe.scripts.length   ? JSON.stringify(pe.scripts)   : null,
+        naming_rules:    txt('p-naming', d['p-naming'] || null),
+        sampling_rate_hz: esc('et-sr') ? null : (d['et-sr'] ? parseFloat(d['et-sr']) : null),
+        unit:            txt('et-unit', d['r_et-unit'] || null),
+        eye_tracker_type: txt('et-type', d['r_et-type'] || null),
+        used_badal:      esc('et-badal') ? null : (d['r_et-badal'] === 'yes'),
+        eye_coverage:    txt('et-eye', d['r_et-eye'] || null),
+        px2arcmin:       txt('et-px2arcmin', d['et-px2arcmin'] ? String(parseFloat(d['et-px2arcmin'])) : null),
+        is_myopia:       txt('sub-myopia', d['r_sub-myopia'] || null),
+        population:      txt('sub-population', d['sub-population'] || null),
+        notes: null  // built below
     };
+
+    // Combine per-page notes
+    var noteParts = [
+        d['p1-notes']  ? '[Path] '           + d['p1-notes']  : '',
+        d['p2-notes']  ? '[Fixation Trial] ' + d['p2-notes']  : '',
+        d['p3-notes']  ? '[Eye-Tracker] '    + d['p3-notes']  : '',
+        d['sub-notes'] ? '[Subject] '        + d['sub-notes'] : ''
+    ].filter(Boolean);
+    result.notes = noteParts.join('\n') || null;
+
+    // Append any script refs for non-text columns
+    if (_refs.length) {
+        var refNote = '[Script refs — ' + _refs.join('; ') + ']';
+        result.notes = result.notes ? result.notes + '\n' + refNote : refNote;
+    }
+
+    return result;
 }
 
 /* ── Submit ── */
@@ -1300,6 +1676,35 @@ function startNew() {
     document.getElementById('px2arcmin-unknown').checked = false;
     document.getElementById('px2arcmin-row').classList.remove('disabled');
     document.getElementById('mark-other-field').style.display = 'none';
+    document.getElementById('f-trial-id-mode').value = '';
+    document.querySelectorAll('#trial-id-chips .mode-chip').forEach(function(b) { b.classList.remove('active'); });
+    ['interval','specific','script','unknown'].forEach(function(m) {
+        var el = document.getElementById('trial-sub-' + m);
+        if (el) el.classList.remove('visible');
+    });
+    // Reset all generic escape-chip fields
+    ['p-naming','f-mark','f-mark-size','f-color',
+     'et-sr','et-unit','et-type','et-badal','et-eye','et-px2arcmin',
+     'sub-myopia','sub-population'].forEach(function(fid) {
+        var modeEl = document.getElementById(fid + '-mode');
+        if (modeEl) modeEl.value = '';
+        document.querySelectorAll('[data-chip-field="' + fid + '"]').forEach(function(b) {
+            b.classList.remove('active');
+            // Restore original label if saved
+            if (b.dataset.label) b.textContent = b.dataset.label;
+        });
+        ['script','unknown'].forEach(function(m) {
+            var el = document.getElementById(fid + '-sub-' + m);
+            if (el) el.classList.remove('visible');
+        });
+        var mainEl = document.getElementById(fid + '-main');
+        if (mainEl) mainEl.classList.remove('field-dimmed');
+    });
+    // Reset trial-id chip labels too
+    document.querySelectorAll('#trial-id-chips .mode-chip').forEach(function(b) {
+        b.classList.remove('active');
+        if (b.dataset.label) b.textContent = b.dataset.label;
+    });
 
     // Clear multi-path entries
     pathEntries = { raw: [], processed: [], scripts: [] };
@@ -1308,6 +1713,139 @@ function startNew() {
     visited      = new Set([1]);
     currentPage  = 0;
     showPage(1);
+}
+
+/* ── Generic escape-chip field mode (Check a script / I don't remember) ── */
+function setFieldMode(fieldId, mode, skipToggle) {
+    var modeEl = document.getElementById(fieldId + '-mode');
+    var current = modeEl ? modeEl.value : '';
+    // Toggle off when same chip is clicked — but NOT during programmatic restore
+    if (!skipToggle && current === mode) mode = '';
+    document.querySelectorAll('[data-chip-field="' + fieldId + '"]').forEach(function(btn) {
+        // Save original label once on first activation
+        if (!btn.dataset.label) btn.dataset.label = btn.textContent.trim();
+        var isActive = btn.dataset.mode === mode;
+        btn.classList.toggle('active', isActive);
+        btn.textContent = isActive ? ('✕ ' + btn.dataset.label) : btn.dataset.label;
+    });
+    ['script','unknown'].forEach(function(m) {
+        var el = document.getElementById(fieldId + '-sub-' + m);
+        if (el) el.classList.toggle('visible', m === mode);
+    });
+    var mainEl = document.getElementById(fieldId + '-main');
+    if (mainEl) mainEl.classList.toggle('field-dimmed', !!mode);
+    if (modeEl) modeEl.value = mode;
+}
+
+/* ── Trial ID mode chip selector ── */
+function setTrialIdMode(mode, skipToggle) {
+    var modeEl = document.getElementById('f-trial-id-mode');
+    var current = modeEl ? modeEl.value : '';
+    // Toggle off if same chip clicked again — but NOT during programmatic restore
+    if (!skipToggle && current === mode) mode = '';
+    document.querySelectorAll('#trial-id-chips .mode-chip').forEach(function(btn) {
+        if (!btn.dataset.label) btn.dataset.label = btn.textContent.trim();
+        var isActive = btn.dataset.mode === mode;
+        btn.classList.toggle('active', isActive);
+        btn.textContent = isActive ? ('✕ ' + btn.dataset.label) : btn.dataset.label;
+    });
+    ['interval','specific','script','unknown'].forEach(function(m) {
+        var el = document.getElementById('trial-sub-' + m);
+        if (el) el.classList.toggle('visible', m === mode);
+    });
+    if (modeEl) modeEl.value = mode;
+}
+
+/* ── Review page builder ── */
+function buildReview() {
+    var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+    var pe = d._pathEntries || pathEntries;
+
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function valHtml(v) {
+        if (v === null || v === undefined || v === '') return '<span class="review-value empty">—</span>';
+        var s = String(v);
+        if (s.indexOf('see:') === 0) return '<span class="review-value ref">' + esc(s) + '</span>';
+        return '<span class="review-value">' + esc(s) + '</span>';
+    }
+    function fieldHtml(fieldId, fallback) {
+        var mode = d[fieldId + '-mode'];
+        if (mode === 'script') {
+            var ref = d[fieldId + '-script'];
+            return '<span class="review-value ref">' + (ref ? 'see: ' + esc(ref) : '(script — not specified)') + '</span>';
+        }
+        if (mode === 'unknown') return '<span class="review-value empty">—</span>';
+        return valHtml(fallback);
+    }
+    function pathListHtml(arr) {
+        if (!arr || !arr.length) return '<span class="review-value empty">—</span>';
+        return '<span class="review-value">' + arr.map(esc).join('<br>') + '</span>';
+    }
+    function row(label, html) {
+        return '<div class="review-row"><span class="review-label">' + label + '</span>' + html + '</div>';
+    }
+    function section(title, page, rows) {
+        return '<div class="review-section">' +
+            '<div class="review-section-title">' + title +
+            ' <button class="review-edit-btn" onclick="jumpToStep(' + page + ')">edit ›</button></div>' +
+            '<div class="review-grid">' + rows.join('') + '</div></div>';
+    }
+
+    var markRaw = d['r_f-mark'] || 'cross';
+    var markDisplay = markRaw === 'other' ? (d['f-mark-custom'] || 'other') : markRaw;
+    var sizeDisplay = d['f-mark-size'] ? (d['f-mark-size'] + ' ' + (d['f-mark-size-unit'] || '')) : null;
+    var srDisplay   = d['et-sr'] ? (d['et-sr'] + ' Hz') : null;
+    var badalRaw    = d['r_et-badal'];
+    var badalDisplay = badalRaw === 'yes' ? 'Yes' : badalRaw === 'no' ? 'No' : null;
+
+    var trialIdDisplay = (function() {
+        var m = d['f-trial-id-mode'];
+        if (m === 'interval') return d['f-trial-interval'] ? 'every ' + d['f-trial-interval'] + ' trials' : null;
+        if (m === 'specific') return d['f-trial-specific'] || null;
+        if (m === 'script')   return d['f-trial-script'] ? 'see: ' + d['f-trial-script'] : null;
+        return null;
+    })();
+
+    var noteParts = [
+        d['p1-notes']  ? 'Path: '           + d['p1-notes']  : '',
+        d['p2-notes']  ? 'Fixation Trial: ' + d['p2-notes']  : '',
+        d['p3-notes']  ? 'Eye-Tracker: '    + d['p3-notes']  : '',
+        d['sub-notes'] ? 'Subject: '        + d['sub-notes'] : ''
+    ].filter(Boolean).join('\n');
+
+    var html = [
+        section('Path', 1, [
+            row('Raw Data',       pathListHtml(pe.raw)),
+            row('Processed Data', pathListHtml(pe.processed)),
+            row('Scripts',        pathListHtml(pe.scripts)),
+            row('Naming Rules',   fieldHtml('p-naming', d['p-naming'] || null)),
+        ]),
+        section('Fixation Trial', 2, [
+            row('Trial ID',   valHtml(trialIdDisplay)),
+            row('Mark',       fieldHtml('f-mark', markDisplay)),
+            row('Mark Size',  fieldHtml('f-mark-size', sizeDisplay)),
+            row('Color',      fieldHtml('f-color', d['f-color-text'] || null)),
+        ]),
+        section('Eye-Tracker', 3, [
+            row('Sampling Rate', fieldHtml('et-sr',        srDisplay)),
+            row('Unit',          fieldHtml('et-unit',      d['r_et-unit']  || null)),
+            row('Type',          fieldHtml('et-type',      d['r_et-type']  || null)),
+            row('Used Badal',    fieldHtml('et-badal',     badalDisplay)),
+            row('Eye Coverage',  fieldHtml('et-eye',       d['r_et-eye']   || null)),
+            row('px2arcmin',     fieldHtml('et-px2arcmin', d['et-px2arcmin'] || null)),
+        ]),
+        section('Subject', 4, [
+            row('Is Myopia',  fieldHtml('sub-myopia',      d['r_sub-myopia']   || null)),
+            row('Population', fieldHtml('sub-population',  d['sub-population'] || null)),
+            row('Notes',      noteParts ? '<span class="review-value" style="white-space:pre-wrap">' + esc(noteParts) + '</span>'
+                                        : '<span class="review-value empty">—</span>'),
+        ]),
+    ].join('');
+
+    document.getElementById('review-content').innerHTML = html;
 }
 
 /* ── Color picker ↔ text sync ── */
@@ -1328,10 +1866,11 @@ document.querySelectorAll('input[name="f-mark"]').forEach(function(r) {
     });
 });
 
-/* ── px2arcmin unknown ── */
-document.getElementById('px2arcmin-unknown').addEventListener('change', function() {
-    document.getElementById('px2arcmin-row').classList.toggle('disabled', this.checked);
-    if (this.checked) document.getElementById('et-px2arcmin').value = '';
+/* ── Escape-chip event delegation ── */
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.escape-chip');
+    if (!btn) return;
+    setFieldMode(btn.dataset.chipField, btn.dataset.mode);
 });
 
 /* ── Toast ── */

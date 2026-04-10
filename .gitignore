@@ -1,2 +1,6 @@
 # Admin page contains service role key — keep off GitHub
 fixation-admin.html
+
+# Local utility scripts — paths/tokens are machine-specific
+generate-folder-tree.py
+generate-folder-tree-api.py

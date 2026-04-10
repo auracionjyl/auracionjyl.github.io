@@ -728,6 +728,9 @@
           px2arcmin            text,
           is_myopia            text,
           population           text,
+          exp_task             text,
+          exp_conditions       text,
+          exp_goal             text,
           notes                text
         );
 
@@ -786,13 +789,21 @@
         <div class="step-item" id="step-5" onclick="jumpToStep(5)">
             <div class="step-num">5</div>
             <div class="step-info">
+                <div class="step-name">Experiment</div>
+                <div class="step-desc">Pipeline &amp; goal</div>
+            </div>
+        </div>
+
+        <div class="step-item" id="step-6" onclick="jumpToStep(6)">
+            <div class="step-num">6</div>
+            <div class="step-info">
                 <div class="step-name">Review</div>
                 <div class="step-desc">Check &amp; submit</div>
             </div>
         </div>
     </div>
 
-    <div class="sidebar-footer" id="sidebar-status">Step 1 of 4</div>
+    <div class="sidebar-footer" id="sidebar-status">Step 1 of 5</div>
     <div style="padding:0.5rem 1rem;border-top:1px solid #e2e8f0;text-align:center;">
         <a href="fixation-admin.html"
            style="font-size:0.68rem;color:#94a3b8;text-decoration:none;"
@@ -1333,12 +1344,80 @@
 
             <div class="page-nav">
                 <button class="btn btn-ghost" onclick="goBack()">‹ Back</button>
+                <button class="btn btn-primary" onclick="goNext()">Next ›</button>
+            </div>
+        </div>
+
+        <!-- ── PAGE 5: Experiment Overview ── -->
+        <div class="page" id="page-5">
+            <div class="page-header">
+                <h2>Experiment Overview</h2>
+                <p>Briefly describe the experiment pipeline so we can understand the context of your dataset.</p>
+            </div>
+            <div class="intro-note">
+                <strong>Note:</strong> All fields are optional. A sentence or two per field is plenty — just enough to give context. Use <strong>I don't remember</strong> on any field you're uncertain about.
+            </div>
+
+            <div class="form-card single-col">
+                <div class="field">
+                    <label for="exp-task">Task</label>
+                    <p class="field-hint">What were subjects asked to do? e.g., "Subjects performed a letter acuity task, identifying optotypes at threshold contrast."</p>
+                    <div id="exp-task-main">
+                        <textarea id="exp-task" placeholder="Describe the task subjects performed…"></textarea>
+                    </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="exp-task" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="exp-task-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank.</div>
+                    </div>
+                    <input type="hidden" id="exp-task-mode" value="">
+                </div>
+
+                <div class="field">
+                    <label for="exp-conditions">Condition Combinations</label>
+                    <p class="field-hint">What conditions or factors were varied? e.g., "3 blur levels (low / medium / high) × 2 eccentricities (2° / 5°), fully crossed."</p>
+                    <div id="exp-conditions-main">
+                        <textarea id="exp-conditions" placeholder="List the conditions and how they were combined…"></textarea>
+                    </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="exp-conditions" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="exp-conditions-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank.</div>
+                    </div>
+                    <input type="hidden" id="exp-conditions-mode" value="">
+                </div>
+
+                <div class="field">
+                    <label for="exp-goal">Experiment Goal</label>
+                    <p class="field-hint">What was the scientific aim? e.g., "To measure fixation stability as a function of optical blur in myopic observers."</p>
+                    <div id="exp-goal-main">
+                        <textarea id="exp-goal" placeholder="State the main research question or hypothesis…"></textarea>
+                    </div>
+                    <div class="escape-chips">
+                        <button type="button" class="mode-chip escape-chip" data-chip-field="exp-goal" data-mode="unknown">I don't remember</button>
+                    </div>
+                    <div class="trial-id-sub" id="exp-goal-sub-unknown">
+                        <div class="unknown-info"><span>✓</span> No worries — this field will be left blank.</div>
+                    </div>
+                    <input type="hidden" id="exp-goal-mode" value="">
+                </div>
+
+                <div class="field">
+                    <label for="exp-notes">Additional Notes <span class="optional">optional</span></label>
+                    <textarea id="exp-notes" placeholder="Any other details about the experiment design, stimuli, or procedure…"></textarea>
+                </div>
+            </div>
+
+            <div class="page-nav">
+                <button class="btn btn-ghost" onclick="goBack()">‹ Back</button>
                 <button class="btn btn-primary" onclick="goNext()">Review ›</button>
             </div>
         </div>
 
-        <!-- ── PAGE 5: Review & Submit ── -->
-        <div class="page" id="page-5">
+        <!-- ── PAGE 6: Review & Submit ── -->
+        <div class="page" id="page-6">
             <div class="page-header">
                 <h2>Review &amp; Submit</h2>
                 <p>Check your answers below. Click any section's <strong>edit</strong> button to go back and change something.</p>
@@ -1387,15 +1466,10 @@ var TABLE_NAME        = 'fixation_trial';
 
 var DRAFT_KEY    = 'ft-draft-v1';
 var currentPage  = 1;
-var TOTAL        = 5;
+var TOTAL        = 6;
 var visited      = new Set([1]);
 
-/* ── Script file extensions (selectable for scripts path) ── */
-/* Data files like .m and .eis are NOT selectable; script/processed files are */
-var SCRIPT_EXTS = new Set([
-    'mat','py','cpp','c','h','hpp','java','js','r','sh','bat',
-    'pl','rb','ipynb','jl','go','rs','swift','lua','ps1'
-]);
+/* All files are selectable and can be assigned to the scripts path */
 
 /* ── Multi-path data store ── */
 var pathEntries = { raw: [], processed: [], scripts: [] };
@@ -1434,7 +1508,15 @@ var PF = {
         radios: ['sub-myopia'],
         checks: []
     },
-    5: { text: [], radios: [], checks: [] }
+    5: {
+        text:   ['exp-task','exp-task-mode',
+                 'exp-conditions','exp-conditions-mode',
+                 'exp-goal','exp-goal-mode',
+                 'exp-notes'],
+        radios: [],
+        checks: []
+    },
+    6: { text: [], radios: [], checks: [] }
 };
 
 /* ── Navigation ── */
@@ -1550,6 +1632,11 @@ function loadDraft(n) {
         });
     }
     if (n === 5) {
+        ['exp-task','exp-conditions','exp-goal'].forEach(function(fid) {
+            if (draft[fid + '-mode']) setFieldMode(fid, draft[fid + '-mode'], true);
+        });
+    }
+    if (n === 6) {
         buildReview();
     }
 }
@@ -1602,15 +1689,19 @@ function gatherAll() {
         px2arcmin:       txt('et-px2arcmin', d['et-px2arcmin'] ? String(parseFloat(d['et-px2arcmin'])) : null),
         is_myopia:       txt('sub-myopia', d['r_sub-myopia'] || null),
         population:      txt('sub-population', d['sub-population'] || null),
+        exp_task:        txt('exp-task', d['exp-task'] || null),
+        exp_conditions:  txt('exp-conditions', d['exp-conditions'] || null),
+        exp_goal:        txt('exp-goal', d['exp-goal'] || null),
         notes: null  // built below
     };
 
     // Combine per-page notes
     var noteParts = [
-        d['p1-notes']  ? '[Path] '           + d['p1-notes']  : '',
-        d['p2-notes']  ? '[Fixation Trial] ' + d['p2-notes']  : '',
-        d['p3-notes']  ? '[Eye-Tracker] '    + d['p3-notes']  : '',
-        d['sub-notes'] ? '[Subject] '        + d['sub-notes'] : ''
+        d['p1-notes']   ? '[Path] '           + d['p1-notes']   : '',
+        d['p2-notes']   ? '[Fixation Trial] ' + d['p2-notes']   : '',
+        d['p3-notes']   ? '[Eye-Tracker] '    + d['p3-notes']   : '',
+        d['sub-notes']  ? '[Subject] '        + d['sub-notes']  : '',
+        d['exp-notes']  ? '[Experiment] '     + d['exp-notes']  : ''
     ].filter(Boolean);
     result.notes = noteParts.join('\n') || null;
 
@@ -1705,7 +1796,8 @@ function startNew() {
     // Reset all generic escape-chip fields
     ['p-naming','f-mark','f-mark-size','f-color',
      'et-sr','et-unit','et-type','et-badal','et-eye','et-px2arcmin',
-     'sub-myopia','sub-population'].forEach(function(fid) {
+     'sub-myopia','sub-population',
+     'exp-task','exp-conditions','exp-goal'].forEach(function(fid) {
         var modeEl = document.getElementById(fid + '-mode');
         if (modeEl) modeEl.value = '';
         document.querySelectorAll('[data-chip-field="' + fid + '"]').forEach(function(b) {
@@ -1870,6 +1962,12 @@ function buildReview() {
             row('Population', fieldHtml('sub-population',  d['sub-population'] || null)),
             row('Notes',      noteParts ? '<span class="review-value" style="white-space:pre-wrap">' + esc(noteParts) + '</span>'
                                         : '<span class="review-value empty">—</span>'),
+        ]),
+        section('Experiment', 5, [
+            row('Task',       fieldHtml('exp-task',       d['exp-task']       || null)),
+            row('Conditions', fieldHtml('exp-conditions', d['exp-conditions'] || null)),
+            row('Goal',       fieldHtml('exp-goal',       d['exp-goal']       || null)),
+            row('Notes',      valHtml(d['exp-notes'] || null)),
         ]),
     ].join('');
 
@@ -2045,16 +2143,14 @@ function renderChildren(parentEl, obj, parentPath, depth) {
     // Render files after folders
     files.forEach(function(name) {
         var fullPath = parentPath + '/' + name;
-        var ext = name.split('.').pop().toLowerCase();
-        var isScript = SCRIPT_EXTS.has(ext);
 
         var node = document.createElement('div');
         node.className = 'tree-node';
 
         var row = document.createElement('div');
-        row.className = 'tree-row tree-file' + (isScript ? ' selectable' : '');
+        row.className = 'tree-row tree-file selectable';
         row.style.paddingLeft = (0.7 + depth * 1) + 'rem';
-        if (isScript) row.setAttribute('data-path', fullPath);
+        row.setAttribute('data-path', fullPath);
         row.setAttribute('data-is-file', 'true');
 
         var arrow = document.createElement('span');
@@ -2072,13 +2168,10 @@ function renderChildren(parentEl, obj, parentPath, depth) {
         label.textContent = name;
         row.appendChild(label);
 
-        // Script files are selectable (for scripts path only)
-        if (isScript) {
-            row.addEventListener('click', function(e) {
-                e.stopPropagation();
-                selectBrowserPath(fullPath, row, true);
-            });
-        }
+        row.addEventListener('click', function(e) {
+            e.stopPropagation();
+            selectBrowserPath(fullPath, row, true);
+        });
 
         node.appendChild(row);
         parentEl.appendChild(node);

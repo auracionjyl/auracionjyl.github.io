@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blur Stimuli Viewer (90 ppd)</title>
+    <title>Stimuli Viewer</title>
     <style>
         * {
             box-sizing: border-box;
@@ -43,12 +43,6 @@
             margin-bottom: 0.2rem;
         }
 
-        .sidebar .subtitle {
-            font-size: 0.78rem;
-            color: #888;
-            margin-top: -0.5rem;
-        }
-
         .control-group {
             display: flex;
             flex-direction: column;
@@ -73,8 +67,8 @@
 
         .control-group select:focus {
             outline: none;
-            border-color: #7c4dff;
-            box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
         }
 
         .toggle-btns {
@@ -107,7 +101,7 @@
         }
 
         .toggle-btns input[type="radio"]:checked + label {
-            background: #7c4dff;
+            background: #4a6cf7;
             color: #fff;
         }
 
@@ -116,7 +110,7 @@
             font-size: 0.95rem;
             font-weight: 600;
             color: #fff;
-            background: #7c4dff;
+            background: #4a6cf7;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -126,10 +120,10 @@
         }
 
         #show-btn:hover {
-            background: #6a3de8;
+            background: #3a5ae0;
         }
 
-        .nav-link {
+        .nav-to-rater {
             display: block;
             padding: 0.45rem 1rem;
             font-size: 0.85rem;
@@ -145,19 +139,9 @@
             margin-top: 0.2rem;
         }
 
-        .nav-link:hover {
+        .nav-to-rater:hover {
             background: #4a6cf7;
             color: #fff;
-        }
-
-        .param-hint {
-            font-size: 0.72rem;
-            color: #aaa;
-            line-height: 1.4;
-            padding: 0.4rem 0.5rem;
-            background: #f8f8f8;
-            border-radius: 6px;
-            border: 1px solid #eee;
         }
 
         /* Right display area */
@@ -189,7 +173,8 @@
             min-height: 200px;
         }
 
-        #stimulus-container img {
+        #stimulus-container img,
+        #stimulus-container video {
             max-width: 100%;
             max-height: calc(100vh - 100px);
             border-radius: 6px;
@@ -199,6 +184,23 @@
         #stimulus-container canvas {
             border-radius: 6px;
             display: block;
+        }
+
+        /* Center-crop wrapper for video: fixed 1000x1000 window */
+        .crop-wrapper {
+            width: 1000px;
+            height: 1000px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .crop-wrapper video {
+            position: absolute;
+            max-width: none !important;
+            max-height: none !important;
+            border-radius: 0;
         }
 
         .not-found {
@@ -236,42 +238,49 @@
 <body>
     <div class="page-layout">
         <div class="sidebar">
-            <h1>Blur Stimuli Viewer</h1>
-            <p class="subtitle">90 ppd &mdash; Gaussian blur variants</p>
-
-            <div class="control-group">
-                <label for="sel-xh">X-height</label>
-                <select id="sel-xh">
-                    <option value="xh12">12 arcmin</option>
-                    <option value="xh15">15 arcmin</option>
-                    <option value="xh18">18 arcmin</option>
-                    <option value="xh24">24 arcmin</option>
-                </select>
-            </div>
+            <h1>Stimuli Viewer</h1>
 
             <div class="control-group">
                 <label for="sel-noise">Noise</label>
                 <select id="sel-noise">
-                    <option value="won">Without Noise</option>
-                    <option value="wn">With Noise</option>
+                    <option value="wonoise">Without Noise</option>
+                    <option value="noise">With Noise</option>
                 </select>
             </div>
 
             <div class="control-group">
-                <label for="sel-ks">Kernel Radius</label>
-                <select id="sel-ks">
-                    <option value="ks50">5.0 arcmin</option>
-                    <option value="ks70">7.0 arcmin</option>
+                <label for="sel-jitter">Jitter</label>
+                <select id="sel-jitter">
+                    <option value="wojitter">No Jitter</option>
+                    <option value="jitter1">Jitter 1</option>
+                    <option value="jitter2">Jitter 2</option>
                 </select>
             </div>
 
             <div class="control-group">
-                <label for="sel-sgm">Gaussian Sigma (&sigma;)</label>
-                <select id="sel-sgm">
-                    <option value="sgm13">1.3 arcmin</option>
-                    <option value="sgm20">2.0 arcmin</option>
-                    <option value="sgm26">2.6 arcmin</option>
-                    <option value="sgm33">3.3 arcmin</option>
+                <label for="sel-blur">Blur</label>
+                <select id="sel-blur">
+                    <option value="woblur">Without Blur</option>
+                    <option value="blur">With Blur</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="sel-res">Resolution</label>
+                <select id="sel-res">
+                    <option value="res30">30 ppd</option>
+                    <option value="res45">45 ppd</option>
+                    <option value="res90">90 ppd</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="sel-fs">Font Size</label>
+                <select id="sel-fs">
+                    <option value="fs12">12 arcmin</option>
+                    <option value="fs15">15 arcmin</option>
+                    <option value="fs18">18 arcmin</option>
+                    <option value="fs24">24 arcmin</option>
                 </select>
             </div>
 
@@ -285,14 +294,9 @@
                 </div>
             </div>
 
-            <div class="param-hint">
-                Filename: <code>xh{N}_{noise}_ks{KR}_sgm{&sigma;}.png</code><br>
-                e.g. <code>xh12_wn_ks50_sgm13.png</code>
-            </div>
-
             <button id="show-btn">Show Stimuli</button>
 
-            <a class="nav-link" href="stimuli-viewer.html">&larr; Original Stimuli Viewer</a>
+            <a class="nav-to-rater" href="rating.html">Rate Stimuli Text →</a>
         </div>
 
         <div class="display-area">
@@ -308,6 +312,7 @@
 
         var CROP = 1000;
 
+        // For images: draw the center 1000x1000 onto a canvas
         function showImageCropped(imgEl, container) {
             var w = imgEl.naturalWidth;
             var h = imgEl.naturalHeight;
@@ -328,19 +333,42 @@
             container.appendChild(canvas);
         }
 
+        // For videos: wrap in a 1000x1000 clipping div, position video so center is visible
+        function showVideoCropped(videoEl, container) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'crop-wrapper';
+
+            videoEl.addEventListener('loadedmetadata', function () {
+                var vw = videoEl.videoWidth;
+                var vh = videoEl.videoHeight;
+                videoEl.style.width = vw + 'px';
+                videoEl.style.height = vh + 'px';
+                videoEl.style.left = ((CROP - vw) / 2) + 'px';
+                videoEl.style.top = ((CROP - vh) / 2) + 'px';
+            });
+
+            wrapper.appendChild(videoEl);
+            container.innerHTML = '';
+            container.appendChild(wrapper);
+        }
+
         function showNotFound(container, filename) {
-            container.innerHTML = '<div class="not-found">No such stimuli.<br><small>' + filename + ' not found in blur_90ppd/</small></div>';
+            container.innerHTML = '<div class="not-found">No such stimuli.<br><small>' + filename + ' not found in data/</small></div>';
         }
 
         document.getElementById('show-btn').addEventListener('click', function () {
-            var xh = document.getElementById('sel-xh').value;
             var noise = document.getElementById('sel-noise').value;
-            var ks = document.getElementById('sel-ks').value;
-            var sgm = document.getElementById('sel-sgm').value;
+            var jitter = document.getElementById('sel-jitter').value;
+            var blur = document.getElementById('sel-blur').value;
+            var res = document.getElementById('sel-res').value;
+            var fs = document.getElementById('sel-fs').value;
             var viewMode = getViewMode();
 
-            var filename = xh + '_' + noise + '_' + ks + '_' + sgm + '.png';
-            var path = 'blur_90ppd/' + filename;
+            var isVideo = jitter !== 'wojitter';
+            var ext = isVideo ? '.mp4' : '.png';
+
+            var filename = noise + '_' + jitter + '_' + blur + '_' + res + '_' + fs + ext;
+            var path = 'data/' + filename;
 
             var container = document.getElementById('stimulus-container');
             var info = document.getElementById('filename-info');
@@ -348,22 +376,60 @@
             info.textContent = 'Looking for: ' + filename + modeLabel;
             container.innerHTML = '';
 
-            var loader = new Image();
-            loader.onload = function () {
+            if (isVideo) {
+                var video = document.createElement('video');
+                video.controls = true;
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                var source = document.createElement('source');
+                source.src = path;
+                source.type = 'video/mp4';
+                video.appendChild(source);
+                video.onerror = function () {
+                    showNotFound(container, filename);
+                };
                 if (viewMode === 'center') {
-                    showImageCropped(loader, container);
+                    showVideoCropped(video, container);
                 } else {
-                    var img = document.createElement('img');
-                    img.src = loader.src;
-                    img.alt = 'Blur Stimulus';
-                    container.innerHTML = '';
-                    container.appendChild(img);
+                    container.appendChild(video);
                 }
-            };
-            loader.onerror = function () {
-                showNotFound(container, filename);
-            };
-            loader.src = path;
+            } else {
+                var loader = new Image();
+                loader.onload = function () {
+                    if (viewMode === 'center') {
+                        showImageCropped(loader, container);
+                    } else {
+                        var img = document.createElement('img');
+                        img.src = loader.src;
+                        img.alt = 'Stimulus';
+                        container.innerHTML = '';
+                        container.appendChild(img);
+                    }
+                };
+                loader.onerror = function () {
+                    var altFilename = noise + '_' + jitter + '__' + blur + '_' + res + '_' + fs + ext;
+                    var altPath = 'data/' + altFilename;
+                    var loader2 = new Image();
+                    loader2.onload = function () {
+                        if (viewMode === 'center') {
+                            showImageCropped(loader2, container);
+                        } else {
+                            var img2 = document.createElement('img');
+                            img2.src = loader2.src;
+                            img2.alt = 'Stimulus';
+                            container.innerHTML = '';
+                            container.appendChild(img2);
+                        }
+                        info.textContent = 'Looking for: ' + altFilename + modeLabel;
+                    };
+                    loader2.onerror = function () {
+                        showNotFound(container, filename);
+                    };
+                    loader2.src = altPath;
+                };
+                loader.src = path;
+            }
         });
     </script>
 </body>

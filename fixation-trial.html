@@ -712,6 +712,7 @@
           submitted_at         timestamptz DEFAULT now(),
           ip_address           text,
           trial_id             text,
+          event_state_id       text,
           mark                 text,
           mark_size_value      float8,
           mark_size_unit       text,
@@ -840,6 +841,12 @@
             </div>
             <div class="intro-note">
                 <strong>Note:</strong> All fields are optional — add only the paths and details relevant to your dataset. Use <strong>Check a script</strong> or <strong>I don't remember</strong> on any field you're uncertain about.
+            </div>
+            <div class="intro-note" style="background:#fffbe6;border-left:3px solid #f59e0b;">
+                <strong>Incomplete tree?</strong> The folder browser below may not show every file or subfolder.
+                If you can't find what you need, search directly on
+                <a href="https://rochester.app.box.com" target="_blank" rel="noopener">Box</a> or Tome,
+                then type the full path into the manual input boxes below the browser.
             </div>
 
             <!-- Folder browser -->
@@ -992,6 +999,42 @@
                     </div>
 
                     <input type="hidden" id="f-trial-id-mode" value="">
+                </div>
+
+                <div class="field full-width">
+                    <label>Event / State ID <span class="optional">optional</span></label>
+                    <p class="field-hint">How do you identify fixation trials in the data? e.g., a specific event code, state number, or another detection method.</p>
+                    <div class="mode-chips" id="event-id-chips">
+                        <button type="button" class="mode-chip" data-mode="known"   onclick="setEventIdMode('known')">Known ID</button>
+                        <button type="button" class="mode-chip" data-mode="other"   onclick="setEventIdMode('other')">Other method</button>
+                        <button type="button" class="mode-chip" data-mode="script"  onclick="setEventIdMode('script')">Check a script</button>
+                        <button type="button" class="mode-chip" data-mode="unknown" onclick="setEventIdMode('unknown')">I don't remember</button>
+                    </div>
+
+                    <!-- Known ID -->
+                    <div class="trial-id-sub" id="event-sub-known">
+                        <input type="text" id="f-event-known" placeholder="e.g., event code 4, state 7, trialType == 'fixation'">
+                    </div>
+
+                    <!-- Other method -->
+                    <div class="trial-id-sub" id="event-sub-other">
+                        <textarea id="f-event-other" placeholder="Describe how fixation trials can be detected&#10;e.g., trials where the stimulus is blank, or based on a flag in the metadata…"></textarea>
+                    </div>
+
+                    <!-- Check a script -->
+                    <div class="trial-id-sub" id="event-sub-script">
+                        <input type="text" id="f-event-script" placeholder="e.g., analysis_pipeline.m  or  scripts/classify_trials.py">
+                        <p class="field-note">Not sure of the exact name? Something broad like <em>"experiment scripts"</em> or <em>"analysis scripts"</em> works too.</p>
+                    </div>
+
+                    <!-- I don't remember -->
+                    <div class="trial-id-sub" id="event-sub-unknown">
+                        <div class="unknown-info">
+                            <span>✓</span> No worries — this field will be left blank. You can always follow up later if the information surfaces.
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="f-event-id-mode" value="">
                 </div>
 
                 <div class="field">
@@ -1483,6 +1526,7 @@ var PF = {
     },
     2: {
         text:   ['f-trial-id-mode','f-trial-interval','f-trial-specific','f-trial-script',
+                 'f-event-id-mode','f-event-known','f-event-other','f-event-script',
                  'f-mark-mode','f-mark-script','f-mark-custom',
                  'f-mark-size','f-mark-size-mode','f-mark-size-script','f-mark-size-unit',
                  'f-color-picker','f-color-text','f-color-mode','f-color-script',
@@ -1617,6 +1661,7 @@ function loadDraft(n) {
         document.getElementById('mark-other-field').style.display =
             draft['r_f-mark'] === 'other' ? '' : 'none';
         if (draft['f-trial-id-mode']) setTrialIdMode(draft['f-trial-id-mode'], true);
+        if (draft['f-event-id-mode']) setEventIdMode(draft['f-event-id-mode'], true);
         ['f-mark','f-mark-size','f-color'].forEach(function(fid) {
             if (draft[fid + '-mode']) setFieldMode(fid, draft[fid + '-mode'], true);
         });
@@ -1671,6 +1716,14 @@ function gatherAll() {
             if (mode === 'interval') return d['f-trial-interval'] ? 'every ' + parseInt(d['f-trial-interval'],10) + ' trials' : null;
             if (mode === 'specific') return d['f-trial-specific'] ? d['f-trial-specific'].trim() : null;
             if (mode === 'script')   return d['f-trial-script']   ? 'see: ' + d['f-trial-script'].trim() : null;
+            return null;
+        })(),
+        event_state_id: (function() {
+            var mode = d['f-event-id-mode'];
+            if (mode === 'known')   return d['f-event-known']  ? d['f-event-known'].trim()  : null;
+            if (mode === 'other')   return d['f-event-other']  ? d['f-event-other'].trim()  : null;
+            if (mode === 'script')  return d['f-event-script'] ? 'see: ' + d['f-event-script'].trim() : null;
+            if (mode === 'unknown') return null;
             return null;
         })(),
         mark:            txt('f-mark', markVal === 'other' ? (d['f-mark-custom'] || null) : markVal),
@@ -1793,6 +1846,12 @@ function startNew() {
         var el = document.getElementById('trial-sub-' + m);
         if (el) el.classList.remove('visible');
     });
+    document.getElementById('f-event-id-mode').value = '';
+    document.querySelectorAll('#event-id-chips .mode-chip').forEach(function(b) { b.classList.remove('active'); });
+    ['known','other','script','unknown'].forEach(function(m) {
+        var el = document.getElementById('event-sub-' + m);
+        if (el) el.classList.remove('visible');
+    });
     // Reset all generic escape-chip fields
     ['p-naming','f-mark','f-mark-size','f-color',
      'et-sr','et-unit','et-type','et-badal','et-eye','et-px2arcmin',
@@ -1812,8 +1871,8 @@ function startNew() {
         var mainEl = document.getElementById(fid + '-main');
         if (mainEl) mainEl.classList.remove('field-dimmed');
     });
-    // Reset trial-id chip labels too
-    document.querySelectorAll('#trial-id-chips .mode-chip').forEach(function(b) {
+    // Reset trial-id and event-id chip labels too
+    document.querySelectorAll('#trial-id-chips .mode-chip, #event-id-chips .mode-chip').forEach(function(b) {
         b.classList.remove('active');
         if (b.dataset.label) b.textContent = b.dataset.label;
     });
@@ -1863,6 +1922,24 @@ function setTrialIdMode(mode, skipToggle) {
     });
     ['interval','specific','script','unknown'].forEach(function(m) {
         var el = document.getElementById('trial-sub-' + m);
+        if (el) el.classList.toggle('visible', m === mode);
+    });
+    if (modeEl) modeEl.value = mode;
+}
+
+/* ── Event/State ID mode chip selector ── */
+function setEventIdMode(mode, skipToggle) {
+    var modeEl = document.getElementById('f-event-id-mode');
+    var current = modeEl ? modeEl.value : '';
+    if (!skipToggle && current === mode) mode = '';
+    document.querySelectorAll('#event-id-chips .mode-chip').forEach(function(btn) {
+        if (!btn.dataset.label) btn.dataset.label = btn.textContent.trim();
+        var isActive = btn.dataset.mode === mode;
+        btn.classList.toggle('active', isActive);
+        btn.textContent = isActive ? ('✕ ' + btn.dataset.label) : btn.dataset.label;
+    });
+    ['known','other','script','unknown'].forEach(function(m) {
+        var el = document.getElementById('event-sub-' + m);
         if (el) el.classList.toggle('visible', m === mode);
     });
     if (modeEl) modeEl.value = mode;
@@ -1929,6 +2006,15 @@ function buildReview() {
         return null;
     })();
 
+    var eventIdDisplay = (function() {
+        var m = d['f-event-id-mode'];
+        if (m === 'known')   return d['f-event-known']  || null;
+        if (m === 'other')   return d['f-event-other']  || null;
+        if (m === 'script')  return d['f-event-script'] ? 'see: ' + d['f-event-script'] : null;
+        if (m === 'unknown') return null;
+        return null;
+    })();
+
     var noteParts = [
         d['p1-notes']  ? 'Path: '           + d['p1-notes']  : '',
         d['p2-notes']  ? 'Fixation Trial: ' + d['p2-notes']  : '',
@@ -1944,8 +2030,9 @@ function buildReview() {
             row('Naming Rules',   fieldHtml('p-naming', d['p-naming'] || null)),
         ]),
         section('Fixation Trial', 2, [
-            row('Trial ID',   valHtml(trialIdDisplay)),
-            row('Mark',       fieldHtml('f-mark', markDisplay)),
+            row('Trial ID',       valHtml(trialIdDisplay)),
+            row('Event/State ID', valHtml(eventIdDisplay)),
+            row('Mark',           fieldHtml('f-mark', markDisplay)),
             row('Mark Size',  fieldHtml('f-mark-size', sizeDisplay)),
             row('Color',      fieldHtml('f-color', d['f-color-text'] || null)),
         ]),

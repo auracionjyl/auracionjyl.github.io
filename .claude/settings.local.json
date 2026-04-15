@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(ls -la /d/auracion/auracionjyl.github.io/data/*.json)",
+      "Bash(python3 -c \":*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(python3:*)",
+      "Bash(python box-cache-pilot.py)",
+      "Bash(python box-cache-populate.py --check)",
+      "Bash(python box-cache-populate.py)"
+    ]
+  }
+}

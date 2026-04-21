@@ -419,6 +419,91 @@
             font-style: italic;
         }
 
+        /* ===== EDITION ADVICE ===== */
+        .rating-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .rating-group + .rating-group {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .advice-label {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            font-style: italic;
+            padding-left: 175px;
+        }
+
+        .advice-input {
+            width: 100%;
+            min-height: 56px;
+            padding: 0.45rem 0.65rem;
+            font-size: 0.82rem;
+            font-family: inherit;
+            color: #334155;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 7px;
+            resize: vertical;
+            transition: border-color 0.15s;
+            line-height: 1.5;
+        }
+
+        .advice-input:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            background: #fff;
+        }
+
+        .advice-input::placeholder { color: #cbd5e1; }
+
+        /* ===== NOTES HISTORY ===== */
+        .notes-section {
+            margin-top: 1.1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .notes-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #94a3b8;
+            margin-bottom: 0.6rem;
+        }
+
+        .note-entry {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 0.55rem;
+        }
+
+        .note-cat {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .note-text {
+            font-size: 0.82rem;
+            color: #334155;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.35rem 0.6rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
         /* ===== CLEAR BUTTON ===== */
         .sidebar-footer {
             padding: 0.6rem 0.75rem;
@@ -496,7 +581,14 @@
         stimulus_id  int,
         story        int,
         q1           int,
-        q2           int
+        q2           int,
+        q3           int,
+        q4           int,
+        story_note   text,
+        q1_note      text,
+        q2_note      text,
+        q3_note      text,
+        q4_note      text
       );
 
       ALTER TABLE public.stimuli_ratings ENABLE ROW LEVEL SECURITY;
@@ -547,7 +639,7 @@ var RATING_TABLE         = 'stimuli_ratings';
     function loadRemoteRatings(callback) {
         if (RATING_SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
         fetch(RATING_SUPABASE_URL + '/rest/v1/' + RATING_TABLE +
-              '?select=stimulus_id,story,q1,q2,q3,q4&limit=10000', {
+              '?select=stimulus_id,story,q1,q2,q3,q4,story_note,q1_note,q2_note,q3_note,q4_note&limit=10000', {
             headers: {
                 'apikey':        RATING_SUPABASE_KEY,
                 'Authorization': 'Bearer ' + RATING_SUPABASE_KEY
@@ -558,20 +650,29 @@ var RATING_TABLE         = 'stimuli_ratings';
             _remoteRatings = {};
             rows.forEach(function (row) {
                 var key = String(row.stimulus_id);
-                if (!_remoteRatings[key]) _remoteRatings[key] = { story: [], q1: [], q2: [], q3: [], q4: [] };
-                if (row.story != null) _remoteRatings[key].story.push(row.story);
-                if (row.q1    != null) _remoteRatings[key].q1.push(row.q1);
-                if (row.q2    != null) _remoteRatings[key].q2.push(row.q2);
-                if (row.q3    != null) _remoteRatings[key].q3.push(row.q3);
-                if (row.q4    != null) _remoteRatings[key].q4.push(row.q4);
+                if (!_remoteRatings[key]) _remoteRatings[key] = {
+                    story: [], q1: [], q2: [], q3: [], q4: [],
+                    story_note: [], q1_note: [], q2_note: [], q3_note: [], q4_note: []
+                };
+                if (row.story      != null) _remoteRatings[key].story.push(row.story);
+                if (row.q1         != null) _remoteRatings[key].q1.push(row.q1);
+                if (row.q2         != null) _remoteRatings[key].q2.push(row.q2);
+                if (row.q3         != null) _remoteRatings[key].q3.push(row.q3);
+                if (row.q4         != null) _remoteRatings[key].q4.push(row.q4);
+                if (row.story_note) _remoteRatings[key].story_note.push(row.story_note);
+                if (row.q1_note)    _remoteRatings[key].q1_note.push(row.q1_note);
+                if (row.q2_note)    _remoteRatings[key].q2_note.push(row.q2_note);
+                if (row.q3_note)    _remoteRatings[key].q3_note.push(row.q3_note);
+                if (row.q4_note)    _remoteRatings[key].q4_note.push(row.q4_note);
             });
             if (callback) callback();
         })
         .catch(function (e) { console.warn('Failed to load remote ratings:', e); });
     }
 
-    /* Single mutable object shared by all star-widget closures */
-    var pending = { story: 0, q1: 0, q2: 0, q3: 0, q4: 0 };
+    /* Single mutable objects shared across widgets */
+    var pending      = { story: 0,  q1: 0,  q2: 0,  q3: 0,  q4: 0  };
+    var pendingNotes = { story: '', q1: '', q2: '', q3: '', q4: '' };
     var currentId = null;
     var currentPage = 1;
 
@@ -588,11 +689,19 @@ var RATING_TABLE         = 'stimuli_ratings';
         /* Prefer remote (cross-browser) data; fall back to localStorage */
         if (Object.keys(_remoteRatings).length > 0) {
             var r = _remoteRatings[key] || {};
-            return { story: r.story || [], q1: r.q1 || [], q2: r.q2 || [], q3: r.q3 || [], q4: r.q4 || [] };
+            return {
+                story: r.story || [], q1: r.q1 || [], q2: r.q2 || [], q3: r.q3 || [], q4: r.q4 || [],
+                story_note: r.story_note || [], q1_note: r.q1_note || [],
+                q2_note: r.q2_note || [], q3_note: r.q3_note || [], q4_note: r.q4_note || []
+            };
         }
         var all = getAllRatings();
         var local = all[key] || {};
-        return { story: local.story || [], q1: local.q1 || [], q2: local.q2 || [], q3: local.q3 || [], q4: local.q4 || [] };
+        return {
+            story: local.story || [], q1: local.q1 || [], q2: local.q2 || [], q3: local.q3 || [], q4: local.q4 || [],
+            story_note: local.story_note || [], q1_note: local.q1_note || [],
+            q2_note: local.q2_note || [], q3_note: local.q3_note || [], q4_note: local.q4_note || []
+        };
     }
 
     function isRated(id) {
@@ -605,29 +714,57 @@ var RATING_TABLE         = 'stimuli_ratings';
         return (local.story || []).length > 0;
     }
 
-    function submitRating(id, sv, q1v, q2v, q3v, q4v) {
+    function submitRating(id, sv, q1v, q2v, q3v, q4v, notes) {
         var all = getAllRatings();
         var key = String(id);
-        if (!all[key]) all[key] = { story: [], q1: [], q2: [], q3: [], q4: [] };
-        ['story', 'q1', 'q2', 'q3', 'q4'].forEach(function (k) { if (!all[key][k]) all[key][k] = []; });
+        var KEYS = ['story', 'q1', 'q2', 'q3', 'q4', 'story_note', 'q1_note', 'q2_note', 'q3_note', 'q4_note'];
+        if (!all[key]) all[key] = {};
+        KEYS.forEach(function (k) { if (!all[key][k]) all[key][k] = []; });
         all[key].story.push(sv);
         all[key].q1.push(q1v);
         all[key].q2.push(q2v);
         all[key].q3.push(q3v);
         all[key].q4.push(q4v);
+        all[key].story_note.push(notes.story);
+        all[key].q1_note.push(notes.q1);
+        all[key].q2_note.push(notes.q2);
+        all[key].q3_note.push(notes.q3);
+        all[key].q4_note.push(notes.q4);
         localStorage.setItem('stimuliRatings', JSON.stringify(all));
 
         /* Optimistically update remote cache so history reflects instantly */
         var _key = String(id);
-        if (!_remoteRatings[_key]) _remoteRatings[_key] = { story: [], q1: [], q2: [], q3: [], q4: [] };
+        if (!_remoteRatings[_key]) _remoteRatings[_key] = {
+            story: [], q1: [], q2: [], q3: [], q4: [],
+            story_note: [], q1_note: [], q2_note: [], q3_note: [], q4_note: []
+        };
         _remoteRatings[_key].story.push(sv);
         _remoteRatings[_key].q1.push(q1v);
         _remoteRatings[_key].q2.push(q2v);
         _remoteRatings[_key].q3.push(q3v);
         _remoteRatings[_key].q4.push(q4v);
+        if (notes.story) _remoteRatings[_key].story_note.push(notes.story);
+        if (notes.q1)    _remoteRatings[_key].q1_note.push(notes.q1);
+        if (notes.q2)    _remoteRatings[_key].q2_note.push(notes.q2);
+        if (notes.q3)    _remoteRatings[_key].q3_note.push(notes.q3);
+        if (notes.q4)    _remoteRatings[_key].q4_note.push(notes.q4);
 
         /* Fire-and-forget: save to Supabase (independent of localStorage) */
         if (RATING_SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+            var payload = {
+                ip_address:  _clientIP,
+                stimulus_id: id,
+                story:       sv,
+                q1:          q1v,
+                q2:          q2v,
+                q3:          q3v,
+                q4:          q4v
+            };
+            if (notes.story) payload.story_note = notes.story;
+            if (notes.q1)    payload.q1_note    = notes.q1;
+            if (notes.q2)    payload.q2_note    = notes.q2;
+            if (notes.q3)    payload.q3_note    = notes.q3;
+            if (notes.q4)    payload.q4_note    = notes.q4;
             fetch(RATING_SUPABASE_URL + '/rest/v1/' + RATING_TABLE, {
                 method: 'POST',
                 headers: {
@@ -636,15 +773,7 @@ var RATING_TABLE         = 'stimuli_ratings';
                     'Authorization': 'Bearer ' + RATING_SUPABASE_KEY,
                     'Prefer':        'return=minimal'
                 },
-                body: JSON.stringify({
-                    ip_address:  _clientIP,
-                    stimulus_id: id,
-                    story:       sv,
-                    q1:          q1v,
-                    q2:          q2v,
-                    q3:          q3v,
-                    q4:          q4v
-                })
+                body: JSON.stringify(payload)
             }).catch(function (e) { console.warn('Supabase save failed:', e); });
         }
     }
@@ -696,7 +825,7 @@ var RATING_TABLE         = 'stimuli_ratings';
                 var span = document.createElement('span');
                 span.textContent = 'Stimulus #' + id;
 
-                /* Color by average naturalness */
+                /* Color by average difficulty */
                 var avg = getOverallAvg(id);
                 var color = avgToColor(avg);
                 if (color) {
@@ -711,7 +840,7 @@ var RATING_TABLE         = 'stimuli_ratings';
                     dot.className = 'rated-dot';
                     if (color) dot.style.background = color;
                     dot.title = avg !== null
-                        ? 'Avg naturalness: ' + avg.toFixed(2)
+                        ? 'Avg difficulty: ' + avg.toFixed(2)
                         : 'Has ratings';
                     item.appendChild(dot);
                 }
@@ -754,14 +883,26 @@ var RATING_TABLE         = 'stimuli_ratings';
     /* Star widget                                                          */
     /* ------------------------------------------------------------------ */
     var LABELS = {
-        story: 'Passage Naturalness',
-        q1:    'Q1 Naturalness',
-        q2:    'Q2 Naturalness (word)',
-        q3:    'Q3 Naturalness (word)',
-        q4:    'Q4 Naturalness (word)'
+        story: 'Passage Difficulty',
+        q1:    'Q1 Difficulty',
+        q2:    'Q2 Difficulty (word)',
+        q3:    'Q3 Difficulty (word)',
+        q4:    'Q4 Difficulty (word)'
     };
 
-    function makeStarWidget(key) {
+    var ADVICE_PLACEHOLDERS = {
+        story: 'Edition advice for the passage (optional)…',
+        q1:    'Edition advice for Q1 (optional)…',
+        q2:    'Edition advice for Q2 word (optional)…',
+        q3:    'Edition advice for Q3 word (optional)…',
+        q4:    'Edition advice for Q4 word (optional)…'
+    };
+
+    function makeRatingGroup(key) {
+        var group = document.createElement('div');
+        group.className = 'rating-group';
+
+        /* ---- star row ---- */
         var row = document.createElement('div');
         row.className = 'rating-row';
 
@@ -805,7 +946,19 @@ var RATING_TABLE         = 'stimuli_ratings';
         row.appendChild(lbl);
         row.appendChild(starsEl);
         row.appendChild(valEl);
-        return row;
+        group.appendChild(row);
+
+        /* ---- advice textarea ---- */
+        var textarea = document.createElement('textarea');
+        textarea.className = 'advice-input';
+        textarea.id = 'note-' + key;
+        textarea.placeholder = ADVICE_PLACEHOLDERS[key];
+        textarea.addEventListener('input', function () {
+            pendingNotes[key] = textarea.value;
+        });
+        group.appendChild(textarea);
+
+        return group;
     }
 
     function checkSubmit() {
@@ -822,11 +975,11 @@ var RATING_TABLE         = 'stimuli_ratings';
 
         var r = getRatingsFor(currentId);
         var cats = [
-            { key: 'story', label: 'Passage Naturalness' },
-            { key: 'q1',    label: 'Q1 Naturalness' },
-            { key: 'q2',    label: 'Q2 Naturalness' },
-            { key: 'q3',    label: 'Q3 Naturalness' },
-            { key: 'q4',    label: 'Q4 Naturalness' }
+            { key: 'story', label: 'Passage Difficulty' },
+            { key: 'q1',    label: 'Q1 Difficulty' },
+            { key: 'q2',    label: 'Q2 Difficulty' },
+            { key: 'q3',    label: 'Q3 Difficulty' },
+            { key: 'q4',    label: 'Q4 Difficulty' }
         ];
         var hasData = cats.some(function (c) { return r[c.key].length > 0; });
 
@@ -928,6 +1081,42 @@ var RATING_TABLE         = 'stimuli_ratings';
 
         el.innerHTML = '';
         el.appendChild(grid);
+
+        /* Edition notes */
+        var noteCats = [
+            { key: 'story_note', label: 'Passage' },
+            { key: 'q1_note',    label: 'Q1' },
+            { key: 'q2_note',    label: 'Q2' },
+            { key: 'q3_note',    label: 'Q3' },
+            { key: 'q4_note',    label: 'Q4' }
+        ];
+        var anyNotes = noteCats.some(function (c) { return (r[c.key] || []).length > 0; });
+        if (anyNotes) {
+            var notesSec = document.createElement('div');
+            notesSec.className = 'notes-section';
+            var notesTitle = document.createElement('div');
+            notesTitle.className = 'notes-section-title';
+            notesTitle.textContent = 'Edition Advice';
+            notesSec.appendChild(notesTitle);
+            noteCats.forEach(function (c) {
+                var notes = r[c.key] || [];
+                notes.forEach(function (txt) {
+                    if (!txt) return;
+                    var entry = document.createElement('div');
+                    entry.className = 'note-entry';
+                    var cat = document.createElement('div');
+                    cat.className = 'note-cat';
+                    cat.textContent = c.label;
+                    var text = document.createElement('div');
+                    text.className = 'note-text';
+                    text.textContent = txt;
+                    entry.appendChild(cat);
+                    entry.appendChild(text);
+                    notesSec.appendChild(entry);
+                });
+            });
+            el.appendChild(notesSec);
+        }
     }
 
     /* ------------------------------------------------------------------ */
@@ -1005,17 +1194,17 @@ var RATING_TABLE         = 'stimuli_ratings';
         rCard.className = 'card';
         var rt = document.createElement('div');
         rt.className = 'card-title';
-        rt.textContent = 'Rate Naturalness';
+        rt.textContent = 'Rate Difficulty & Edition Advice';
         rCard.appendChild(rt);
 
         var hint = document.createElement('div');
         hint.className = 'hint-text';
-        hint.textContent = '1 = Very Unnatural \u00b7 2 = Unnatural \u00b7 3 = Neutral \u00b7 4 = Natural \u00b7 5 = Very Natural';
+        hint.textContent = '1 = Very Easy \u00b7 2 = Easy \u00b7 3 = Neutral \u00b7 4 = Difficult \u00b7 5 = Very Difficult';
         rCard.appendChild(hint);
 
         var rows = document.createElement('div');
         rows.className = 'rating-rows';
-        ['story', 'q1', 'q2', 'q3', 'q4'].forEach(function (k) { rows.appendChild(makeStarWidget(k)); });
+        ['story', 'q1', 'q2', 'q3', 'q4'].forEach(function (k) { rows.appendChild(makeRatingGroup(k)); });
         rCard.appendChild(rows);
 
         var submitBtn = document.createElement('button');
@@ -1030,12 +1219,18 @@ var RATING_TABLE         = 'stimuli_ratings';
 
         submitBtn.addEventListener('click', function () {
             if (!pending.story || !pending.q1 || !pending.q2 || !pending.q3 || !pending.q4) return;
-            submitRating(currentId, pending.story, pending.q1, pending.q2, pending.q3, pending.q4);
+            submitRating(currentId, pending.story, pending.q1, pending.q2, pending.q3, pending.q4, {
+                story: pendingNotes.story, q1: pendingNotes.q1, q2: pendingNotes.q2,
+                q3: pendingNotes.q3, q4: pendingNotes.q4
+            });
             submitMsg.textContent = '\u2713 Rating submitted!';
             setTimeout(function () { submitMsg.textContent = ''; }, 3000);
             pending.story = 0; pending.q1 = 0; pending.q2 = 0; pending.q3 = 0; pending.q4 = 0;
+            pendingNotes.story = ''; pendingNotes.q1 = ''; pendingNotes.q2 = '';
+            pendingNotes.q3 = ''; pendingNotes.q4 = '';
             document.querySelectorAll('.stars .star').forEach(function (s) { s.classList.remove('lit'); });
             document.querySelectorAll('.rating-val').forEach(function (v) { v.textContent = '\u2014'; });
+            document.querySelectorAll('.advice-input').forEach(function (t) { t.value = ''; });
             submitBtn.disabled = true;
             renderHistory();
             buildIdList();

@@ -1135,6 +1135,8 @@ var RATING_TABLE         = 'stimuli_ratings';
     /* ------------------------------------------------------------------ */
     function renderPage(data) {
         pending.story = 0; pending.q1 = 0; pending.q2 = 0; pending.q3 = 0; pending.q4 = 0;
+        pendingNotes.story = ''; pendingNotes.q1 = ''; pendingNotes.q2 = '';
+        pendingNotes.q3 = ''; pendingNotes.q4 = '';
 
         var main = document.getElementById('main');
         main.innerHTML = '';
@@ -1148,65 +1150,65 @@ var RATING_TABLE         = 'stimuli_ratings';
         hdr.innerHTML = posLabel + '<strong>Stimulus #' + data.ID + '</strong> &nbsp;of ' + TOTAL;
         main.appendChild(hdr);
 
-        /* Stimulus card */
+        /* ---- Single combined card ---- */
         var card = document.createElement('div');
         card.className = 'card';
+
         var ct = document.createElement('div');
         ct.className = 'card-title';
-        ct.textContent = 'Stimulus Content';
+        ct.textContent = 'Stimulus Content & Ratings';
         card.appendChild(ct);
-
-        var passageSec = document.createElement('div');
-        passageSec.className = 'stim-section';
-        passageSec.innerHTML =
-            '<div class="stim-label">Passage</div>' +
-            '<div class="stim-text">' + esc(data.story) + '</div>';
-        card.appendChild(passageSec);
-
-        var q1Sec = document.createElement('div');
-        q1Sec.className = 'stim-section';
-        q1Sec.innerHTML =
-            '<div class="stim-label">Question 1 \u2014 True / False</div>' +
-            '<div class="stim-text">' + esc(data.q1) +
-            '<span class="answer-badge ' + (data.a1 ? 'badge-t' : 'badge-f') + '">' +
-            (data.a1 ? 'True' : 'False') + '</span></div>';
-        card.appendChild(q1Sec);
-
-        function makeWordSec(label, word, present) {
-            var sec = document.createElement('div');
-            sec.className = 'stim-section';
-            sec.innerHTML =
-                '<div class="stim-label">' + label + ' \u2014 Target Word</div>' +
-                '<div class="stim-text"><span class="target-word">' + esc(word) + '</span>' +
-                '<span class="word-meta ' + (present ? 'word-meta-present' : 'word-meta-absent') + '">' +
-                (present ? '\u2713 appears in passage' : '\u2717 does not appear in passage') +
-                '</span></div>';
-            return sec;
-        }
-
-        card.appendChild(makeWordSec('Question 2', data.q2, data.a2));
-        card.appendChild(makeWordSec('Question 3', data.q3, data.a3));
-        card.appendChild(makeWordSec('Question 4', data.q4, data.a4));
-        main.appendChild(card);
-
-        /* Rating card */
-        var rCard = document.createElement('div');
-        rCard.className = 'card';
-        var rt = document.createElement('div');
-        rt.className = 'card-title';
-        rt.textContent = 'Rate Difficulty & Edition Advice';
-        rCard.appendChild(rt);
 
         var hint = document.createElement('div');
         hint.className = 'hint-text';
         hint.textContent = '1 = Very Easy \u00b7 2 = Easy \u00b7 3 = Neutral \u00b7 4 = Difficult \u00b7 5 = Very Difficult';
-        rCard.appendChild(hint);
+        card.appendChild(hint);
 
-        var rows = document.createElement('div');
-        rows.className = 'rating-rows';
-        ['story', 'q1', 'q2', 'q3', 'q4'].forEach(function (k) { rows.appendChild(makeRatingGroup(k)); });
-        rCard.appendChild(rows);
+        /* Helper: build a stim-section and append its rating group inline */
+        function makeSection(labelHtml, contentHtml, ratingKey) {
+            var sec = document.createElement('div');
+            sec.className = 'stim-section';
+            var labelDiv = document.createElement('div');
+            labelDiv.className = 'stim-label';
+            labelDiv.innerHTML = labelHtml;
+            var contentDiv = document.createElement('div');
+            contentDiv.className = 'stim-text';
+            contentDiv.innerHTML = contentHtml;
+            sec.appendChild(labelDiv);
+            sec.appendChild(contentDiv);
+            sec.appendChild(makeRatingGroup(ratingKey));
+            return sec;
+        }
 
+        /* Passage */
+        card.appendChild(makeSection(
+            'Passage',
+            esc(data.story),
+            'story'
+        ));
+
+        /* Q1 — True/False */
+        card.appendChild(makeSection(
+            'Question 1 \u2014 True / False',
+            esc(data.q1) +
+                '<span class="answer-badge ' + (data.a1 ? 'badge-t' : 'badge-f') + '">' +
+                (data.a1 ? 'True' : 'False') + '</span>',
+            'q1'
+        ));
+
+        /* Q2–Q4 — target words */
+        function wordContent(word, present) {
+            return '<span class="target-word">' + esc(word) + '</span>' +
+                '<span class="word-meta ' + (present ? 'word-meta-present' : 'word-meta-absent') + '">' +
+                (present ? '\u2713 appears in passage' : '\u2717 does not appear in passage') +
+                '</span>';
+        }
+
+        card.appendChild(makeSection('Question 2 \u2014 Target Word', wordContent(data.q2, data.a2), 'q2'));
+        card.appendChild(makeSection('Question 3 \u2014 Target Word', wordContent(data.q3, data.a3), 'q3'));
+        card.appendChild(makeSection('Question 4 \u2014 Target Word', wordContent(data.q4, data.a4), 'q4'));
+
+        /* Submit */
         var submitBtn = document.createElement('button');
         submitBtn.className = 'submit-btn';
         submitBtn.id = 'submit-btn';
@@ -1236,9 +1238,9 @@ var RATING_TABLE         = 'stimuli_ratings';
             buildIdList();
         });
 
-        rCard.appendChild(submitBtn);
-        rCard.appendChild(submitMsg);
-        main.appendChild(rCard);
+        card.appendChild(submitBtn);
+        card.appendChild(submitMsg);
+        main.appendChild(card);
 
         /* History card */
         var hCard = document.createElement('div');

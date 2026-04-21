@@ -519,52 +519,19 @@ var RATING_TABLE         = 'stimuli_ratings';
     'use strict';
 
     /* ------------------------------------------------------------------ */
-    /* Inline stimulus data — no fetch() needed, works on file://          */
+    /* Story files — loaded from ./stories/ at startup                     */
     /* ------------------------------------------------------------------ */
-    var STIMULI = {
-        1:  {"ID":1,"story":"A multilateral treaty is concluded among several countries. The agreement establishes rights and obligations between each party and every other party. Multilateral treaties are often regional.[citation needed] Treaties of \"mutual guarantee\" are international compacts, e.g., the Treaty of Locarno which guarantees each signatory against attack from another.","q1":"The Treaty of Locarno guarantees each signatory state protection against attack by other signatories. (True/False?)","a1":true,"q2":"signatory","a2":true},
-        2:  {"ID":2,"story":"The proportion of non-repetitive DNA is calculated by using the length of non-repetitive DNA divided by genome size. Protein-coding genes and RNA-coding genes are generally non-repetitive DNA. A bigger genome does not mean more genes, and the proportion of non-repetitive DNA decreases along with increasing genome size in higher eukaryotes.","q1":"In higher eukaryotes, the proportion of non-repetitive DNA increases as genome size grows larger. (True/False?)","a1":false,"q2":"chromosome","a2":false},
-        3:  {"ID":3,"story":"An earthquake emergency relief team of 184 people (consisting of 12 people from the State Seismological Bureau, 150 from the Beijing Military Area Command, and 22 from the Armed Police General Hospital) left Beijing from Nanyuan Airport late May 12 in two military transport planes to travel to Wenchuan County.","q1":"The 184-person earthquake relief team traveled from Beijing to Wenchuan County by military transport plane. (True/False?)","a1":true,"q2":"rescue","a2":false},
-        4:  {"ID":4,"story":"At a minimum, HDTV has twice the linear resolution of standard-definition television (SDTV), thus showing greater detail than either analog television or regular DVD. The technical standards for broadcasting HDTV also handle the 16:9 aspect ratio images without using letterboxing or anamorphic stretching, thus increasing the effective image resolution.","q1":"HDTV broadcast standards handle 16:9 aspect ratio images by applying letterboxing to preserve image resolution. (True/False?)","a1":false,"q2":"resolution","a2":true},
-        5:  {"ID":5,"story":"Although he began his tenure as governor with record high approval ratings (as high as 89% in December 2003), he left office with a record low 23%, only one percent higher than that of Gray Davis's when he was recalled in October 2003.","q1":"Schwarzenegger's approval rating when he left office was higher than Gray Davis's approval rating at the time of Davis's recall. (True/False?)","a1":true,"q2":"election","a2":false},
-        6:  {"ID":6,"story":"A HDI below 0.5 is considered to represent \"low development\". All 22 countries in that category are located in Africa. The highest-scoring Sub-Saharan countries, Gabon and South Africa, are ranked 119th and 121st, respectively. Nine countries departed from this category this year and joined the \"medium development\" group.","q1":"Countries with an HDI below 0.5 are spread across multiple continents. (True/False?)","a1":false,"q2":"Africa","a2":true},
-        7:  {"ID":7,"story":"The architecture and urbanism of the Classical civilizations such as the Greek and the Roman evolved from civic ideals rather than religious or empirical ones and new building types emerged. Architectural \"style\" developed in the form of the Classical orders.","q1":"Greek and Roman classical architecture was primarily shaped by religious and empirical ideals rather than civic ones. (True/False?)","a1":false,"q2":"civic","a2":true},
-        8:  {"ID":8,"story":"China's modern higher education began in 1895 with the Imperial Tientsin University which was a polytechnic plus a law department. Liberal arts were not offered until three years later at Capital University. To this day, about half of China's elite universities remain essentially polytechnical.","q1":"The Imperial Tientsin University, which launched China's modern higher education in 1895, was also the first Chinese institution to offer liberal arts courses. (True/False?)","a1":false,"q2":"polytechnic","a2":true},
-        9:  {"ID":9,"story":"In addition, recording and reproducing an HDTV signal was a significant technical challenge in the early years of HDTV (Sony HDVS). Japan remained the only country with successful public broadcasting of analog HDTV, with seven broadcasters sharing a single channel.","q1":"In the early years of HDTV, Japan was the only country to achieve successful public broadcasting of analog HDTV. (True/False?)","a1":true,"q2":"satellite","a2":false},
-        10: {"ID":10,"story":"Some dog breeds have acquired traits through selective breeding that interfere with reproduction. Male French Bulldogs, for instance, are incapable of mounting the female. For many dogs of this breed, the female must be artificially inseminated in order to reproduce.","q1":"Male French Bulldogs are capable of natural reproduction without human assistance. (True/False?)","a1":false,"q2":"inseminated","a2":true},
-        11: {"ID":11,"story":"Some of the species of moths and insects show evidence of having been indigenous to the area from as long ago as the Alpine orogeny. In Emosson in Valais, Switzerland, dinosaur tracks were found in the 1970s, dating probably from the Triassic Period.","q1":"Dinosaur tracks discovered in Emosson, Switzerland in the 1970s are believed to date from the Triassic Period. (True/False?)","a1":true,"q2":"moths","a2":true},
-        12: {"ID":12,"story":"In addition to these popular examples of house, there has also been a reunification of contemporary house and its roots. Many hip hop and R&B artists also turn to house music to add a mass appeal to the music they produce.","q1":"Hip hop and R&B artists incorporate house music into their work primarily to broaden its commercial appeal. (True/False?)","a1":true,"q2":"reunification","a2":true},
-        13: {"ID":13,"story":"According to the journal DesignIntelligence, which annually publishes \"America's Best Architecture and Design Schools,\" the School of Architecture and Urban Design at the University of Kansas was named the best in the Midwest and ranked 11th among all undergraduate architecture programs in the U.S in 2012.","q1":"In 2012, DesignIntelligence ranked the University of Kansas School of Architecture as the top undergraduate architecture program in the United States. (True/False?)","a1":false,"q2":"accreditation","a2":false},
-        14: {"ID":14,"story":"The finalists were Cook and Archuleta. David Cook was announced the winner on May 21, 2008, the first rocker to win the show. Both Cook and Archuleta had some success as recording artists with both selling over a million albums in the U.S.","q1":"David Cook, announced the winner of American Idol on May 21, 2008, was the first rocker to win the competition. (True/False?)","a1":true,"q2":"rocker","a2":true},
-        15: {"ID":15,"story":"Thomas Jefferson observed a tendency for \"The functionaries of every government ... to command at will the liberty and property of their constituents. There is no safe deposit [for liberty and property] ... without information. Where the press is free, and every man able to read, all is safe.\"","q1":"Thomas Jefferson believed that a free press combined with widespread literacy is sufficient to safeguard liberty and property. (True/False?)","a1":true,"q2":"press","a2":true},
-        16: {"ID":16,"story":"Hydrogen is commonly used in power stations as a coolant in generators due to a number of favorable properties that are a direct result of its light diatomic molecules. These include low density, low viscosity, and the highest specific heat and thermal conductivity of all gases.","q1":"Hydrogen is favored as a coolant in power station generators in part because of its high density. (True/False?)","a1":false,"q2":"reactor","a2":false},
-        17: {"ID":17,"story":"Because of the magnitude of the quake, and the media attention on China, foreign nations and organizations immediately responded to the disaster by offering condolences and assistance. On May 14, UNICEF reported that China formally requested the support of the international community to respond to the needs of affected families.","q1":"Following the 2008 Sichuan earthquake, foreign nations offered China both condolences and material assistance. (True/False?)","a1":true,"q2":"UNICEF","a2":true},
-        18: {"ID":18,"story":"In January 2010, Hong Kong-based English newspaper The Standard reported that writer Tan Zuoren attempted to document shoddy construction that may have led to massive casualties in schools, was sentenced to in prison ostensibly for his writing an article in 2007 in support of the pro-democracy movement in 1989.","q1":"Tan Zuoren was sentenced to prison explicitly because of his investigation into poor school construction following the Sichuan earthquake. (True/False?)","a1":false,"q2":"journalist","a2":false},
-        19: {"ID":19,"story":"Towards the end of the season, Randy Jackson, the last remaining of the original judges, announced that he would no longer serve as a judge to pursue other business ventures. Both judges Mariah Carey and Nicki Minaj also decided to leave after one season to focus on their music careers.","q1":"Mariah Carey served as an American Idol judge for multiple seasons before leaving to focus on her music career. (True/False?)","a1":false,"q2":"ratings","a2":false},
-        20: {"ID":20,"story":"For Ruskin, the aesthetic was of overriding significance. His work goes on to state that a building is not truly a work of architecture unless it is in some way \"adorned\". For Ruskin, a well-constructed, well-proportioned, functional building needed string courses or rustication, at the very least.","q1":"According to Ruskin, a building must be adorned in some way to truly qualify as a work of architecture. (True/False?)","a1":true,"q2":"adorned","a2":true},
-        21: {"ID":21,"story":"LE: Life expectancy at birth\nMYS: Mean years of schooling (Years that a person 25 years-of-age or older has spent in schools)\nEYS: Expected years of schooling (Years that a 5-year-old child will spend in schools throughout his life)\nGNIpc: Gross national income at purchasing power parity per capita","q1":"In the Human Development Index, GNIpc stands for gross national income measured at purchasing power parity per capita. (True/False?)","a1":true,"q2":"inequality","a2":false},
-        22: {"ID":22,"story":"Paper is a thin material produced by pressing together moist fibres of cellulose pulp derived from wood, rags or grasses, and drying them into flexible sheets. It is a versatile material with many uses, including writing, printing, packaging, cleaning, and a number of industrial and construction processes.","q1":"Paper is made by pressing moist cellulose fibers together and then heating them to form rigid sheets. (True/False?)","a1":false,"q2":"bleach","a2":false},
-        23: {"ID":23,"story":"The prefix neo is used to describe a 20th-century or contemporary composition written in the style of an earlier era, such as Classical or Romantic. Stravinsky's Pulcinella, for example, is a neoclassical composition because it is stylistically similar to works of the Classical era.","q1":"Stravinsky's Pulcinella is classified as neoclassical because it stylistically resembles compositions of the Romantic era. (True/False?)","a1":false,"q2":"symphony","a2":false},
-        24: {"ID":24,"story":"On Children's Day, June 1, 2008, many parents went to the rubble of schools to mourn for their children. The surviving children, who were mostly living in relief centres, performed ceremonies marking the special day, but also acknowledging the earthquake.","q1":"On Children's Day 2008, most surviving children from the Sichuan earthquake were living in relief centres. (True/False?)","a1":true,"q2":"rubble","a2":true},
-        25: {"ID":25,"story":"Most of Nanjing's major theatres are multi-purpose, used as convention halls, cinemas, musical halls and theatres on different occasions. The major theatres include the People's Convention Hall and the Nanjing Arts and Culture Center. The Capital Theatre well known in the past is now a museum in theatre/film.","q1":"The Capital Theatre in Nanjing continues to operate as an active performing arts venue today. (True/False?)","a1":false,"q2":"opera","a2":false},
-        26: {"ID":26,"story":"What is known in Iranian linguistic history as the \"Middle Iranian\" era is thought to begin around the 4th century BCE lasting through the 9th century. Linguistically the Middle Iranian languages are conventionally classified into two main groups, Western and Eastern.","q1":"Middle Iranian languages are conventionally classified into Northern and Southern branches. (True/False?)","a1":false,"q2":"dialect","a2":false},
-        27: {"ID":27,"story":"155th Street is a major crosstown street considered to form the boundary between Harlem and Washington Heights. It is the northernmost of the 155 crosstown streets mapped out in the Commissioner's Plan of 1811 that established the numbered street grid in Manhattan.","q1":"Manhattan's numbered street grid was established by the Commissioner's Plan of 1811. (True/False?)","a1":true,"q2":"boundary","a2":true},
-        28: {"ID":28,"story":"If a party has materially violated or breached its treaty obligations, the other parties may invoke this breach as grounds for temporarily suspending their obligations to that party under the treaty. A material breach may also be invoked as grounds for permanently terminating the treaty itself.","q1":"Under international law, a material breach of treaty obligations can only justify the temporary suspension of other parties' obligations, not the permanent termination of the treaty. (True/False?)","a1":false,"q2":"arbitration","a2":false},
-        29: {"ID":29,"story":"East 1st Street begins just North of East Houston Street at Avenue A and continues to Bowery. Peretz Square, a small triangular sliver park where Houston Street, First Street and First Avenue meet marks the spot where the grid takes hold.","q1":"Peretz Square, located where Houston Street, First Street, and First Avenue converge, is a circular park. (True/False?)","a1":false,"q2":"triangular","a2":true},
-        30: {"ID":30,"story":"Hydrogen is sometimes produced and consumed in the same industrial process, without being separated. In the Haber process for the production of ammonia, hydrogen is generated from natural gas. Electrolysis of brine to yield chlorine also produces hydrogen as a co-product.","q1":"The Haber process uses hydrogen derived from natural gas to produce ammonia. (True/False?)","a1":true,"q2":"ammonia","a2":true},
-        31: {"ID":31,"story":"In many ancient civilizations, such as those of Egypt and Mesopotamia, architecture and urbanism reflected the constant engagement with the divine and the supernatural, and many ancient cultures resorted to monumentality in architecture to represent symbolically the political power of the ruler, the ruling elite, or the state itself.","q1":"In ancient Egypt and Mesopotamia, monumental architecture was used primarily to honor the gods rather than to display political power. (True/False?)","a1":false,"q2":"pyramid","a2":false},
-        32: {"ID":32,"story":"The canon law of the Eastern Catholic Churches, which had developed some different disciplines and practices, underwent its own process of codification, resulting in the Code of Canons of the Eastern Churches promulgated in 1990 by Pope John Paul II.","q1":"The Code of Canons of the Eastern Churches was formally promulgated by Pope John Paul II in 1990. (True/False?)","a1":true,"q2":"codification","a2":true},
-        33: {"ID":33,"story":"Seeking to harm enemies becomes corruption when official powers are illegitimately used as means to this end. For example, trumped-up charges are often brought up against journalists or writers who bring up politically sensitive issues, such as a politician's acceptance of bribes.","q1":"According to the passage, officials have been known to use fabricated legal charges against journalists who report on politically sensitive topics. (True/False?)","a1":true,"q2":"journalists","a2":true},
-        34: {"ID":34,"story":"Schwarzenegger's private jet made an emergency landing at Van Nuys Airport on June 19, 2009, after the pilot reported smoke coming from the cockpit, according to a statement released by the governor's press secretary. No one was harmed in the incident.","q1":"Schwarzenegger's private jet made an emergency landing in 2009 after a passenger reported smoke in the cockpit. (True/False?)","a1":false,"q2":"turbulence","a2":false},
-        35: {"ID":35,"story":"Other than by appearance, \"Coloureds\" can usually be distinguished from \"Blacks\" by language. Most speak Afrikaans or English as a first language, as opposed to Bantu languages such as Zulu or Xhosa. They also tend to have more European-sounding names than Bantu names.","q1":"Most 'Coloureds' in South Africa speak Bantu languages such as Zulu or Xhosa as their first language. (True/False?)","a1":false,"q2":"apartheid","a2":false},
-        36: {"ID":36,"story":"During encoding, 576 time-domain samples are taken and are transformed to 576 frequency-domain samples.[clarification needed] If there is a transient, 192 samples are taken instead of 576. This is done to limit the temporal spread of quantization noise accompanying the transient. (See psychoacoustics.)","q1":"During MP3 encoding, a reduced sample count of 192 is used when a transient is detected, in order to limit the temporal spread of quantization noise. (True/False?)","a1":true,"q2":"transient","a2":true},
-        37: {"ID":37,"story":"The iPod has also been credited with accelerating shifts within the music industry. The iPod's popularization of digital music storage allows users to abandon listening to entire albums and instead be able to choose specific singles which hastened the end of the Album Era in popular music.","q1":"The iPod's popularization of digital music storage is credited with contributing to the end of the Album Era in popular music. (True/False?)","a1":true,"q2":"streaming","a2":false},
-        38: {"ID":38,"story":"The chemical composition of wood varies from species to species, but is approximately 50% carbon, 42% oxygen, 6% hydrogen, 1% nitrogen, and 1% other elements (mainly calcium, potassium, sodium, magnesium, iron, and manganese) by weight. Wood also contains sulfur, chlorine, silicon, phosphorus, and other elements in small quantity.","q1":"Carbon is the most abundant element in wood by weight, while oxygen accounts for approximately 42% of its composition. (True/False?)","a1":true,"q2":"carbon","a2":true},
-        39: {"ID":39,"story":"The Romans interacted with and later conquered parts of Mauretania, an early state that covered modern Morocco, western Algeria, and the Spanish cities Ceuta and Melilla during the classical period. The people of the region were noted in Classical literature as Mauri, which was subsequently rendered as Moors in English.","q1":"The English word 'Moors' derives from 'Mauri,' the term used in Classical literature to describe people of the Mauretania region. (True/False?)","a1":true,"q2":"Mediterranean","a2":false},
-        40: {"ID":40,"story":"Schools called \"technical institute\" or \"technical school\" that were formed in the early 20th century provided further education between high school and University or Polytechnic. Most technical institutes have been merged into regional colleges and some have been designated university colleges if they are associated with a local university.","q1":"Technical institutes that merged into regional colleges were automatically redesignated as university colleges. (True/False?)","a1":false,"q2":"curriculum","a2":false}
-    };
+    var STORY_FILES = (function () {
+        var files = [];
+        for (var i = 1; i <= 28; i++) {
+            files.push('./stories/stories_' + String(i).padStart(3, '0') + '.json');
+        }
+        return files;
+    })();
 
-    var TOTAL = Object.keys(STIMULI).length;
+    var STIMULI = {};   /* keyed by numeric ID */
+    var SORTED_IDS = [];
+    var TOTAL = 0;
     var PAGE_SIZE = 20;
 
     /* Cache client IP once — reused on every rating submission */
@@ -580,7 +547,7 @@ var RATING_TABLE         = 'stimuli_ratings';
     function loadRemoteRatings(callback) {
         if (RATING_SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
         fetch(RATING_SUPABASE_URL + '/rest/v1/' + RATING_TABLE +
-              '?select=stimulus_id,story,q1,q2&limit=10000', {
+              '?select=stimulus_id,story,q1,q2,q3,q4&limit=10000', {
             headers: {
                 'apikey':        RATING_SUPABASE_KEY,
                 'Authorization': 'Bearer ' + RATING_SUPABASE_KEY
@@ -591,10 +558,12 @@ var RATING_TABLE         = 'stimuli_ratings';
             _remoteRatings = {};
             rows.forEach(function (row) {
                 var key = String(row.stimulus_id);
-                if (!_remoteRatings[key]) _remoteRatings[key] = { story: [], q1: [], q2: [] };
+                if (!_remoteRatings[key]) _remoteRatings[key] = { story: [], q1: [], q2: [], q3: [], q4: [] };
                 if (row.story != null) _remoteRatings[key].story.push(row.story);
                 if (row.q1    != null) _remoteRatings[key].q1.push(row.q1);
                 if (row.q2    != null) _remoteRatings[key].q2.push(row.q2);
+                if (row.q3    != null) _remoteRatings[key].q3.push(row.q3);
+                if (row.q4    != null) _remoteRatings[key].q4.push(row.q4);
             });
             if (callback) callback();
         })
@@ -602,8 +571,8 @@ var RATING_TABLE         = 'stimuli_ratings';
     }
 
     /* Single mutable object shared by all star-widget closures */
-    var pending = { story: 0, q1: 0, q2: 0 };
-    var currentId = 1;
+    var pending = { story: 0, q1: 0, q2: 0, q3: 0, q4: 0 };
+    var currentId = null;
     var currentPage = 1;
 
     /* ------------------------------------------------------------------ */
@@ -619,11 +588,11 @@ var RATING_TABLE         = 'stimuli_ratings';
         /* Prefer remote (cross-browser) data; fall back to localStorage */
         if (Object.keys(_remoteRatings).length > 0) {
             var r = _remoteRatings[key] || {};
-            return { story: r.story || [], q1: r.q1 || [], q2: r.q2 || [] };
+            return { story: r.story || [], q1: r.q1 || [], q2: r.q2 || [], q3: r.q3 || [], q4: r.q4 || [] };
         }
         var all = getAllRatings();
         var local = all[key] || {};
-        return { story: local.story || [], q1: local.q1 || [], q2: local.q2 || [] };
+        return { story: local.story || [], q1: local.q1 || [], q2: local.q2 || [], q3: local.q3 || [], q4: local.q4 || [] };
     }
 
     function isRated(id) {
@@ -636,22 +605,26 @@ var RATING_TABLE         = 'stimuli_ratings';
         return (local.story || []).length > 0;
     }
 
-    function submitRating(id, sv, q1v, q2v) {
+    function submitRating(id, sv, q1v, q2v, q3v, q4v) {
         var all = getAllRatings();
         var key = String(id);
-        if (!all[key]) all[key] = { story: [], q1: [], q2: [] };
-        ['story', 'q1', 'q2'].forEach(function (k) { if (!all[key][k]) all[key][k] = []; });
+        if (!all[key]) all[key] = { story: [], q1: [], q2: [], q3: [], q4: [] };
+        ['story', 'q1', 'q2', 'q3', 'q4'].forEach(function (k) { if (!all[key][k]) all[key][k] = []; });
         all[key].story.push(sv);
         all[key].q1.push(q1v);
         all[key].q2.push(q2v);
+        all[key].q3.push(q3v);
+        all[key].q4.push(q4v);
         localStorage.setItem('stimuliRatings', JSON.stringify(all));
 
         /* Optimistically update remote cache so history reflects instantly */
         var _key = String(id);
-        if (!_remoteRatings[_key]) _remoteRatings[_key] = { story: [], q1: [], q2: [] };
+        if (!_remoteRatings[_key]) _remoteRatings[_key] = { story: [], q1: [], q2: [], q3: [], q4: [] };
         _remoteRatings[_key].story.push(sv);
         _remoteRatings[_key].q1.push(q1v);
         _remoteRatings[_key].q2.push(q2v);
+        _remoteRatings[_key].q3.push(q3v);
+        _remoteRatings[_key].q4.push(q4v);
 
         /* Fire-and-forget: save to Supabase (independent of localStorage) */
         if (RATING_SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
@@ -668,16 +641,18 @@ var RATING_TABLE         = 'stimuli_ratings';
                     stimulus_id: id,
                     story:       sv,
                     q1:          q1v,
-                    q2:          q2v
+                    q2:          q2v,
+                    q3:          q3v,
+                    q4:          q4v
                 })
             }).catch(function (e) { console.warn('Supabase save failed:', e); });
         }
     }
 
-    /* Average of all ratings across all three categories for one stimulus */
+    /* Average of all ratings across all five categories for one stimulus */
     function getOverallAvg(id) {
         var r = getRatingsFor(id);
-        var all = r.story.concat(r.q1).concat(r.q2);
+        var all = r.story.concat(r.q1).concat(r.q2).concat(r.q3).concat(r.q4);
         if (all.length === 0) return null;
         return all.reduce(function (a, b) { return a + b; }, 0) / all.length;
     }
@@ -700,8 +675,8 @@ var RATING_TABLE         = 'stimuli_ratings';
     /* ------------------------------------------------------------------ */
     function buildIdList() {
         var tp = totalPages();
-        var startIdx = (currentPage - 1) * PAGE_SIZE + 1;
-        var endIdx   = Math.min(currentPage * PAGE_SIZE, TOTAL);
+        var pageStart = (currentPage - 1) * PAGE_SIZE;
+        var pageEnd   = Math.min(currentPage * PAGE_SIZE, TOTAL);
 
         /* Update page indicator and page nav buttons */
         document.getElementById('page-indicator').textContent =
@@ -709,10 +684,10 @@ var RATING_TABLE         = 'stimuli_ratings';
         document.getElementById('page-prev-btn').disabled = currentPage <= 1;
         document.getElementById('page-next-btn').disabled = currentPage >= tp;
 
-        /* Build the visible items */
+        /* Build the visible items from SORTED_IDS */
         var list = document.getElementById('id-list');
         list.innerHTML = '';
-        for (var i = startIdx; i <= endIdx; i++) {
+        for (var i = pageStart; i < pageEnd; i++) {
             (function (id) {
                 var item = document.createElement('div');
                 item.className = 'id-item' + (id === currentId ? ' active' : '');
@@ -743,7 +718,7 @@ var RATING_TABLE         = 'stimuli_ratings';
 
                 item.addEventListener('click', function () { goTo(id); });
                 list.appendChild(item);
-            })(i);
+            })(SORTED_IDS[i]);
         }
 
         var active = list.querySelector('.id-item.active');
@@ -754,15 +729,18 @@ var RATING_TABLE         = 'stimuli_ratings';
     /* Nav buttons                                                          */
     /* ------------------------------------------------------------------ */
     function updateNavBtns() {
-        document.getElementById('prev-btn').disabled = currentId <= 1;
-        document.getElementById('next-btn').disabled = currentId >= TOTAL;
+        var idx = SORTED_IDS.indexOf(currentId);
+        document.getElementById('prev-btn').disabled = idx <= 0;
+        document.getElementById('next-btn').disabled = idx >= TOTAL - 1;
     }
 
     document.getElementById('prev-btn').addEventListener('click', function () {
-        if (currentId > 1) goTo(currentId - 1);
+        var idx = SORTED_IDS.indexOf(currentId);
+        if (idx > 0) goTo(SORTED_IDS[idx - 1]);
     });
     document.getElementById('next-btn').addEventListener('click', function () {
-        if (currentId < TOTAL) goTo(currentId + 1);
+        var idx = SORTED_IDS.indexOf(currentId);
+        if (idx < TOTAL - 1) goTo(SORTED_IDS[idx + 1]);
     });
 
     document.getElementById('page-prev-btn').addEventListener('click', function () {
@@ -775,7 +753,13 @@ var RATING_TABLE         = 'stimuli_ratings';
     /* ------------------------------------------------------------------ */
     /* Star widget                                                          */
     /* ------------------------------------------------------------------ */
-    var LABELS = { story: 'Passage Naturalness', q1: 'Q1 Naturalness', q2: 'Q2 Naturalness' };
+    var LABELS = {
+        story: 'Passage Naturalness',
+        q1:    'Q1 Naturalness',
+        q2:    'Q2 Naturalness (word)',
+        q3:    'Q3 Naturalness (word)',
+        q4:    'Q4 Naturalness (word)'
+    };
 
     function makeStarWidget(key) {
         var row = document.createElement('div');
@@ -826,7 +810,7 @@ var RATING_TABLE         = 'stimuli_ratings';
 
     function checkSubmit() {
         var btn = document.getElementById('submit-btn');
-        if (btn) btn.disabled = !(pending.story && pending.q1 && pending.q2);
+        if (btn) btn.disabled = !(pending.story && pending.q1 && pending.q2 && pending.q3 && pending.q4);
     }
 
     /* ------------------------------------------------------------------ */
@@ -840,7 +824,9 @@ var RATING_TABLE         = 'stimuli_ratings';
         var cats = [
             { key: 'story', label: 'Passage Naturalness' },
             { key: 'q1',    label: 'Q1 Naturalness' },
-            { key: 'q2',    label: 'Q2 Naturalness' }
+            { key: 'q2',    label: 'Q2 Naturalness' },
+            { key: 'q3',    label: 'Q3 Naturalness' },
+            { key: 'q4',    label: 'Q4 Naturalness' }
         ];
         var hasData = cats.some(function (c) { return r[c.key].length > 0; });
 
@@ -959,7 +945,7 @@ var RATING_TABLE         = 'stimuli_ratings';
     /* Render page for one stimulus                                         */
     /* ------------------------------------------------------------------ */
     function renderPage(data) {
-        pending.story = 0; pending.q1 = 0; pending.q2 = 0;
+        pending.story = 0; pending.q1 = 0; pending.q2 = 0; pending.q3 = 0; pending.q4 = 0;
 
         var main = document.getElementById('main');
         main.innerHTML = '';
@@ -967,7 +953,10 @@ var RATING_TABLE         = 'stimuli_ratings';
         /* Header */
         var hdr = document.createElement('div');
         hdr.className = 'page-title';
-        hdr.innerHTML = '<strong>Stimulus #' + data.ID + '</strong> &nbsp;of ' + TOTAL;
+        var posLabel = data.topic
+            ? esc(data.topic.replace(/_/g, ' ')) + ' &nbsp;&mdash;&nbsp; '
+            : '';
+        hdr.innerHTML = posLabel + '<strong>Stimulus #' + data.ID + '</strong> &nbsp;of ' + TOTAL;
         main.appendChild(hdr);
 
         /* Stimulus card */
@@ -988,21 +977,27 @@ var RATING_TABLE         = 'stimuli_ratings';
         var q1Sec = document.createElement('div');
         q1Sec.className = 'stim-section';
         q1Sec.innerHTML =
-            '<div class="stim-label">Question 1</div>' +
+            '<div class="stim-label">Question 1 \u2014 True / False</div>' +
             '<div class="stim-text">' + esc(data.q1) +
             '<span class="answer-badge ' + (data.a1 ? 'badge-t' : 'badge-f') + '">' +
             (data.a1 ? 'True' : 'False') + '</span></div>';
         card.appendChild(q1Sec);
 
-        var q2Sec = document.createElement('div');
-        q2Sec.className = 'stim-section';
-        q2Sec.innerHTML =
-            '<div class="stim-label">Question 2 \u2014 Target Word</div>' +
-            '<div class="stim-text"><span class="target-word">' + esc(data.q2) + '</span>' +
-            '<span class="word-meta ' + (data.a2 ? 'word-meta-present' : 'word-meta-absent') + '">' +
-            (data.a2 ? '\u2713 appears in passage' : '\u2717 does not appear in passage') +
-            '</span></div>';
-        card.appendChild(q2Sec);
+        function makeWordSec(label, word, present) {
+            var sec = document.createElement('div');
+            sec.className = 'stim-section';
+            sec.innerHTML =
+                '<div class="stim-label">' + label + ' \u2014 Target Word</div>' +
+                '<div class="stim-text"><span class="target-word">' + esc(word) + '</span>' +
+                '<span class="word-meta ' + (present ? 'word-meta-present' : 'word-meta-absent') + '">' +
+                (present ? '\u2713 appears in passage' : '\u2717 does not appear in passage') +
+                '</span></div>';
+            return sec;
+        }
+
+        card.appendChild(makeWordSec('Question 2', data.q2, data.a2));
+        card.appendChild(makeWordSec('Question 3', data.q3, data.a3));
+        card.appendChild(makeWordSec('Question 4', data.q4, data.a4));
         main.appendChild(card);
 
         /* Rating card */
@@ -1020,7 +1015,7 @@ var RATING_TABLE         = 'stimuli_ratings';
 
         var rows = document.createElement('div');
         rows.className = 'rating-rows';
-        ['story', 'q1', 'q2'].forEach(function (k) { rows.appendChild(makeStarWidget(k)); });
+        ['story', 'q1', 'q2', 'q3', 'q4'].forEach(function (k) { rows.appendChild(makeStarWidget(k)); });
         rCard.appendChild(rows);
 
         var submitBtn = document.createElement('button');
@@ -1034,11 +1029,11 @@ var RATING_TABLE         = 'stimuli_ratings';
         submitMsg.id = 'submit-msg';
 
         submitBtn.addEventListener('click', function () {
-            if (!pending.story || !pending.q1 || !pending.q2) return;
-            submitRating(currentId, pending.story, pending.q1, pending.q2);
+            if (!pending.story || !pending.q1 || !pending.q2 || !pending.q3 || !pending.q4) return;
+            submitRating(currentId, pending.story, pending.q1, pending.q2, pending.q3, pending.q4);
             submitMsg.textContent = '\u2713 Rating submitted!';
             setTimeout(function () { submitMsg.textContent = ''; }, 3000);
-            pending.story = 0; pending.q1 = 0; pending.q2 = 0;
+            pending.story = 0; pending.q1 = 0; pending.q2 = 0; pending.q3 = 0; pending.q4 = 0;
             document.querySelectorAll('.stars .star').forEach(function (s) { s.classList.remove('lit'); });
             document.querySelectorAll('.rating-val').forEach(function (v) { v.textContent = '\u2014'; });
             submitBtn.disabled = true;
@@ -1072,7 +1067,8 @@ var RATING_TABLE         = 'stimuli_ratings';
     function goTo(id) {
         currentId = id;
         /* Auto-switch sidebar page so the active item is always visible */
-        currentPage = Math.ceil(id / PAGE_SIZE);
+        var idx = SORTED_IDS.indexOf(id);
+        currentPage = Math.ceil((idx + 1) / PAGE_SIZE);
         history.replaceState(null, '', '#' + id);
         updateNavBtns();
         buildIdList();
@@ -1082,8 +1078,9 @@ var RATING_TABLE         = 'stimuli_ratings';
     /* Arrow-key navigation */
     document.addEventListener('keydown', function (e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-        if (e.key === 'ArrowLeft'  && currentId > 1)     goTo(currentId - 1);
-        if (e.key === 'ArrowRight' && currentId < TOTAL) goTo(currentId + 1);
+        var idx = SORTED_IDS.indexOf(currentId);
+        if (e.key === 'ArrowLeft'  && idx > 0)          goTo(SORTED_IDS[idx - 1]);
+        if (e.key === 'ArrowRight' && idx < TOTAL - 1)  goTo(SORTED_IDS[idx + 1]);
     });
 
     /* ------------------------------------------------------------------ */
@@ -1097,19 +1094,45 @@ var RATING_TABLE         = 'stimuli_ratings';
     });
 
     /* ------------------------------------------------------------------ */
-    /* Init                                                                 */
+    /* Load story files, then initialise                                    */
     /* ------------------------------------------------------------------ */
-    var hash = parseInt(window.location.hash.slice(1), 10);
-    var startId = (hash >= 1 && hash <= TOTAL) ? hash : 1;
-    updateNavBtns();
-    buildIdList();
-    goTo(startId);
+    function init() {
+        var hash = parseInt(window.location.hash.slice(1), 10);
 
-    /* Load remote ratings — re-render history + sidebar when ready */
-    loadRemoteRatings(function () {
-        buildIdList();
-        renderHistory();
-    });
+        Promise.all(STORY_FILES.map(function (url) {
+            return fetch(url).then(function (r) { return r.json(); });
+        }))
+        .then(function (results) {
+            results.forEach(function (arr) {
+                arr.forEach(function (item) {
+                    STIMULI[item.ID] = item;
+                });
+            });
+
+            SORTED_IDS = Object.keys(STIMULI)
+                .map(Number)
+                .sort(function (a, b) { return a - b; });
+            TOTAL = SORTED_IDS.length;
+
+            var startId = (STIMULI[hash]) ? hash : SORTED_IDS[0];
+            updateNavBtns();
+            buildIdList();
+            goTo(startId);
+
+            /* Load remote ratings — re-render history + sidebar when ready */
+            loadRemoteRatings(function () {
+                buildIdList();
+                renderHistory();
+            });
+        })
+        .catch(function (e) {
+            document.getElementById('main').innerHTML =
+                '<div style="color:#dc2626;padding:3rem;text-align:center">' +
+                'Failed to load story files: ' + e.message + '</div>';
+        });
+    }
+
+    init();
 
 })();
 </script>

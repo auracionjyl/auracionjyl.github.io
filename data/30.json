@@ -1,8 +1,0 @@
-{
-  "ID": 30,
-  "story": "Hydrogen is sometimes produced and consumed in the same industrial process, without being separated. In the Haber process for the production of ammonia, hydrogen is generated from natural gas. Electrolysis of brine to yield chlorine also produces hydrogen as a co-product.",
-  "q1": "The Haber process uses hydrogen derived from natural gas to produce ammonia. (True/False?)",
-  "a1": true,
-  "q2": "ammonia",
-  "a2": true
-}

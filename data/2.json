@@ -1,8 +1,0 @@
-{
-  "ID": 2,
-  "story": "The proportion of non-repetitive DNA is calculated by using the length of non-repetitive DNA divided by genome size. Protein-coding genes and RNA-coding genes are generally non-repetitive DNA. A bigger genome does not mean more genes, and the proportion of non-repetitive DNA decreases along with increasing genome size in higher eukaryotes.",
-  "q1": "In higher eukaryotes, the proportion of non-repetitive DNA increases as genome size grows larger. (True/False?)",
-  "a1": false,
-  "q2": "chromosome",
-  "a2": false
-}

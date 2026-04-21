@@ -1,0 +1,67 @@
+[
+  {
+    "topic": "2008_Summer_Olympics_torch_relay",
+    "story": "Sultanate of Oman: Muscat was the torch's only stop in the Middle East, on April 14. The relay covered 20 km. No protests or incidents were reported. One of the torchbearers was Syrian actress Sulaf Fawakherji.",
+    "ID": 541,
+    "q1": "Muscat was the only torch relay stop in the Middle East. (true/false)",
+    "a1": false,
+    "q2": "Multiple protests occurred during the Muscat relay. (true/false)",
+    "a2": false,
+    "q3": "performer",
+    "a3": false,
+    "q4": "torchbearers",
+    "a4": true
+  },
+  {
+    "topic": "2008_Summer_Olympics_torch_relay",
+    "story": "Intended torchbearer Lin Hatfield Dodds withdrew from the event, explaining that she wished to express concern about China's human rights record. Foreign Minister Stephen Smith said her decision was \"a very good example of peacefully making a point\".",
+    "ID": 542,
+    "q1": "Lin Hatfield Dodds withdrew to protest human rights. (true/false)",
+    "a1": true,
+    "q2": "Foreign Minister Stephen Smith condemned the withdrawal. (true/false)",
+    "a2": true,
+    "q3": "declined",
+    "a3": false,
+    "q4": "torchbearer",
+    "a4": true
+  },
+  {
+    "topic": "2008_Summer_Olympics_torch_relay",
+    "story": "A union planned to protest at the relay for better living conditions. Hong Kong legislator Michael Mak Kwok-fung and activist Chan Cheong, both members of the League of Social Democrats, were not allowed to enter Macau.",
+    "ID": 543,
+    "q1": "Michael Mak Kwok-fung was barred from entering Macau. (true/false)",
+    "a1": false,
+    "q2": "The union protested for political reforms. (true/false)",
+    "a2": false,
+    "q3": "dummy",
+    "a3": false,
+    "q4": "Party",
+    "a4": false
+  },
+  {
+    "topic": "Genome",
+    "story": "In modern molecular biology and genetics, the genome is the genetic material of an organism. It consists of DNA (or RNA in RNA viruses). The genome includes both the genes and the non-coding sequences of the DNA/RNA.",
+    "ID": 544,
+    "q1": "The genome includes only genes and coding sequences. (true/false)",
+    "a1": false,
+    "q2": "RNA viruses have RNA as their genetic material. (true/false)",
+    "a2": true,
+    "q3": "consists",
+    "a3": true,
+    "q4": "comprises",
+    "a4": false
+  },
+  {
+    "topic": "Genome",
+    "story": "Genome composition is used to describe the make up of contents of a haploid genome, which should include genome size, proportions of non-repetitive DNA and repetitive DNA in details. By comparing the genome compositions between genomes, scientists can better understand the evolutionary history of a given genome.",
+    "ID": 545,
+    "q1": "Genome composition helps explain evolutionary history. (true/false)",
+    "a1": true,
+    "q2": "Genome composition only measures total genome size. (true/false)",
+    "a2": false,
+    "q3": "dummy",
+    "a3": false,
+    "q4": "analyzing",
+    "a4": false
+  }
+]

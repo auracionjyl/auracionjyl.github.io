@@ -828,7 +828,9 @@
                 We are currently working on a project that involves analysing eye-tracking data
                 collected across our lab's past experiments. To move forward, we need your help
                 gathering more detailed information about the datasets from your previous projects,
-                particularly those that included <strong>fixation trials</strong>.<br><br>
+                particularly those that included a <strong>fixation task</strong> — whether as a
+                dedicated fixation trial, a fixation period embedded within a trial, or a
+                recalibration step at the start of a trial or block.<br><br>
                 Please take a few minutes to fill out this questionnaire for each relevant dataset
                 you have worked with. Your input is essential for us to properly organise and
                 analyse the data. Thank you for your time and support!
@@ -953,7 +955,7 @@
         <!-- ── PAGE 2: Fixation Trial ── -->
         <div class="page" id="page-2">
             <div class="page-header">
-                <h2>Fixation Trial</h2>
+                <h2>Fixation Task</h2>
                 <p>Configure the fixation mark appearance and trial structure.</p>
             </div>
             <div class="intro-note">
@@ -962,8 +964,8 @@
 
             <div class="form-card">
                 <div class="field full-width">
-                    <label>Fixation Trial ID <span class="optional">optional — fill in what you remember</span></label>
-                    <p class="field-hint">How were fixation trials placed in your experiment? Pick the option that best describes what you recall.</p>
+                    <label>Fixation Trial ID <span class="optional">optional — for independent fixation trials only</span></label>
+                    <p class="field-hint">If your experiment had <strong>dedicated fixation trials</strong> (i.e., the fixation task occupied an entire trial on its own), describe how they were placed. Skip this field if the fixation task was a period within a trial or a recalibration step.</p>
                     <div class="mode-chips" id="trial-id-chips">
                         <button type="button" class="mode-chip" data-mode="interval" onclick="setTrialIdMode('interval')">Every N trials</button>
                         <button type="button" class="mode-chip" data-mode="specific"  onclick="setTrialIdMode('specific')">Specific IDs</button>
@@ -1002,8 +1004,8 @@
                 </div>
 
                 <div class="field full-width">
-                    <label>Event / State ID <span class="optional">optional</span></label>
-                    <p class="field-hint">How do you identify fixation trials in the data? e.g., a specific event code, state number, or another detection method.</p>
+                    <label>Event / State ID <span class="optional">optional — for fixation periods within a trial or recalibration</span></label>
+                    <p class="field-hint">If the fixation task was a <strong>period within a trial</strong> (e.g., a fixation interval before a stimulus) or a <strong>recalibration</strong> step at the start of a trial/block, provide the event code, state number, or other identifier used to mark it in the data.</p>
                     <div class="mode-chips" id="event-id-chips">
                         <button type="button" class="mode-chip" data-mode="known"   onclick="setEventIdMode('known')">Known ID</button>
                         <button type="button" class="mode-chip" data-mode="other"   onclick="setEventIdMode('other')">Other method</button>

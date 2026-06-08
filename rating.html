@@ -1412,6 +1412,9 @@ var RATING_TABLE         = 'stimuli_ratings';
         })
         .then(function (r) { return r.json(); })
         .then(function (rows) {
+            if (!Array.isArray(rows)) {
+                throw new Error(rows && rows.message ? rows.message : JSON.stringify(rows));
+            }
             /* Aggregate per stimulus — arrays preserve insertion order,
                so the last element is always the latest entry */
             var agg = {};

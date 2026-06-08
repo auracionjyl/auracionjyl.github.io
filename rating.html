@@ -1404,7 +1404,7 @@ var RATING_TABLE         = 'stimuli_ratings';
 
         fetch(RATING_SUPABASE_URL + '/rest/v1/' + RATING_TABLE +
               '?select=stimulus_id,story,q1,q2,q3,q4,story_note,q1_note,q2_note,q3_note,q4_note' +
-              '&order=created_at.asc&limit=10000', {
+              '&limit=10000', {
             headers: {
                 'apikey':        RATING_SUPABASE_KEY,
                 'Authorization': 'Bearer ' + RATING_SUPABASE_KEY

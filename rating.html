@@ -532,6 +532,26 @@
             border-top: 1px solid #e2e8f0;
         }
 
+        .export-btn {
+            width: 100%;
+            padding: 0.38rem 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            background: #fff;
+            color: #475569;
+            cursor: pointer;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+            margin-bottom: 0.4rem;
+        }
+
+        .export-btn:hover {
+            color: #16a34a;
+            border-color: #86efac;
+            background: #f0fdf4;
+        }
+
         .clear-btn {
             width: 100%;
             padding: 0.38rem 0;
@@ -580,6 +600,7 @@
     </div>
     <div class="id-list" id="id-list"></div>
     <div class="sidebar-footer">
+        <button class="export-btn" id="export-btn">&#x2B07; Export CSV</button>
         <button class="clear-btn" id="clear-btn">&#x1F5D1; Clear All Ratings</button>
     </div>
 </aside>
@@ -815,10 +836,10 @@ var RATING_TABLE         = 'stimuli_ratings';
     /* Map average 1-5 to a color */
     function avgToColor(avg) {
         if (avg === null) return null;
-        if (avg >= 4)   return '#16a34a'; /* green  */
-        if (avg >= 3)   return '#ca8a04'; /* amber  */
-        if (avg >= 2)   return '#ea580c'; /* orange */
-        return '#dc2626';                 /* red    */
+        if (avg >= 4)   return '#dc2626'; /* red    */
+        if (avg >= 3)   return '#ea580c'; /* orange */
+        if (avg >= 2)   return '#ca8a04'; /* amber  */
+        return '#16a34a';                 /* green  */
     }
 
     function totalPages() {
@@ -1371,6 +1392,97 @@ var RATING_TABLE         = 'stimuli_ratings';
             })
             .catch(function (e) { alert('Local data cleared, but Supabase wipe failed:\n' + e.message); });
         }
+    });
+
+    /* ------------------------------------------------------------------ */
+    /* Export CSV                                                           */
+    /* ------------------------------------------------------------------ */
+    document.getElementById('export-btn').addEventListener('click', function () {
+        var btn = this;
+        btn.disabled = true;
+        btn.textContent = 'Fetching…';
+
+        fetch(RATING_SUPABASE_URL + '/rest/v1/' + RATING_TABLE +
+              '?select=stimulus_id,story,q1,q2,q3,q4,story_note,q1_note,q2_note,q3_note,q4_note' +
+              '&order=created_at.asc&limit=10000', {
+            headers: {
+                'apikey':        RATING_SUPABASE_KEY,
+                'Authorization': 'Bearer ' + RATING_SUPABASE_KEY
+            }
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (rows) {
+            /* Aggregate per stimulus — arrays preserve insertion order,
+               so the last element is always the latest entry */
+            var agg = {};
+            rows.forEach(function (row) {
+                var key = String(row.stimulus_id);
+                if (!agg[key]) agg[key] = {
+                    story: [], q1: [], q2: [], q3: [], q4: [],
+                    story_note: [], q1_note: [], q2_note: [], q3_note: [], q4_note: []
+                };
+                var a = agg[key];
+                if (row.story      != null) a.story.push(row.story);
+                if (row.q1         != null) a.q1.push(row.q1);
+                if (row.q2         != null) a.q2.push(row.q2);
+                if (row.q3         != null) a.q3.push(row.q3);
+                if (row.q4         != null) a.q4.push(row.q4);
+                if (row.story_note) a.story_note.push(row.story_note);
+                if (row.q1_note)    a.q1_note.push(row.q1_note);
+                if (row.q2_note)    a.q2_note.push(row.q2_note);
+                if (row.q3_note)    a.q3_note.push(row.q3_note);
+                if (row.q4_note)    a.q4_note.push(row.q4_note);
+            });
+
+            function avg(arr) {
+                if (!arr.length) return '';
+                return (arr.reduce(function (s, v) { return s + v; }, 0) / arr.length).toFixed(2);
+            }
+            function latest(arr) { return arr.length ? arr[arr.length - 1] : ''; }
+            function csvCell(v) {
+                var s = String(v);
+                return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+            }
+
+            var header = [
+                'stimulus_id', 'n_ratings',
+                'story_avg', 'q1_avg', 'q2_avg', 'q3_avg', 'q4_avg',
+                'story_note', 'q1_note', 'q2_note', 'q3_note', 'q4_note'
+            ];
+
+            var lines = [header.join(',')];
+            SORTED_IDS.forEach(function (id) {
+                var key = String(id);
+                var a = agg[key];
+                if (!a) {
+                    lines.push([id, 0, '', '', '', '', '', '', '', '', '', ''].join(','));
+                    return;
+                }
+                var nRatings = a.story.length;
+                lines.push([
+                    id, nRatings,
+                    avg(a.story), avg(a.q1), avg(a.q2), avg(a.q3), avg(a.q4),
+                    csvCell(latest(a.story_note)), csvCell(latest(a.q1_note)),
+                    csvCell(latest(a.q2_note)),    csvCell(latest(a.q3_note)),
+                    csvCell(latest(a.q4_note))
+                ].join(','));
+            });
+
+            var blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+            var url  = URL.createObjectURL(blob);
+            var a    = document.createElement('a');
+            a.href     = url;
+            a.download = 'stimuli_ratings_' + new Date().toISOString().slice(0, 10) + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        })
+        .catch(function (e) { alert('Export failed: ' + e.message); })
+        .finally(function () {
+            btn.disabled = false;
+            btn.textContent = '⬇ Export CSV';
+        });
     });
 
     /* ------------------------------------------------------------------ */

@@ -1,0 +1,191 @@
+{
+  "generated": "2026-11-10T11:36:18-05:00",
+  "subjects": [
+    {
+      "subject": "AN",
+      "blocks": 20,
+      "raw": 16,
+      "processed": 16,
+      "pages_total": 320,
+      "pages_viewed": 320,
+      "review_percent": 100.0,
+      "pages_excluded": 0,
+      "segments_excluded": 154,
+      "boundary_edits": 8,
+      "clean_blocks": 16,
+      "clean": false
+    },
+    {
+      "subject": "SM",
+      "blocks": 20,
+      "raw": 16,
+      "processed": 16,
+      "pages_total": 320,
+      "pages_viewed": 320,
+      "review_percent": 100.0,
+      "pages_excluded": 22,
+      "segments_excluded": 3401,
+      "boundary_edits": 937,
+      "clean_blocks": 16,
+      "clean": false
+    },
+    {
+      "subject": "YZ",
+      "blocks": 20,
+      "raw": 16,
+      "processed": 16,
+      "pages_total": 320,
+      "pages_viewed": 96,
+      "review_percent": 30.0,
+      "pages_excluded": 0,
+      "segments_excluded": 47,
+      "boundary_edits": 268,
+      "clean_blocks": 4,
+      "clean": false
+    },
+    {
+      "subject": "Z251",
+      "blocks": 25,
+      "raw": 21,
+      "processed": 21,
+      "pages_total": 420,
+      "pages_viewed": 1,
+      "review_percent": 0.2,
+      "pages_excluded": 0,
+      "segments_excluded": 0,
+      "boundary_edits": 0,
+      "clean_blocks": 0,
+      "clean": false
+    },
+    {
+      "subject": "Z266",
+      "blocks": 20,
+      "raw": 16,
+      "processed": 16,
+      "pages_total": 320,
+      "pages_viewed": 0,
+      "review_percent": 0.0,
+      "pages_excluded": 0,
+      "segments_excluded": 0,
+      "boundary_edits": 0,
+      "clean_blocks": 0,
+      "clean": false
+    },
+    {
+      "subject": "KP",
+      "blocks": 20,
+      "raw": 16,
+      "processed": 16,
+      "pages_total": 320,
+      "pages_viewed": 320,
+      "review_percent": 100.0,
+      "pages_excluded": 13,
+      "segments_excluded": 1554,
+      "boundary_edits": 580,
+      "clean_blocks": 16,
+      "clean": false
+    },
+    {
+      "subject": "KN",
+      "blocks": 15,
+      "raw": 12,
+      "processed": 12,
+      "pages_total": 240,
+      "pages_viewed": 3,
+      "review_percent": 1.2,
+      "pages_excluded": 9,
+      "segments_excluded": 386,
+      "boundary_edits": 210,
+      "clean_blocks": 0,
+      "clean": false
+    },
+    {
+      "subject": "LN",
+      "blocks": 25,
+      "raw": 21,
+      "processed": 21,
+      "pages_total": 420,
+      "pages_viewed": 1,
+      "review_percent": 0.2,
+      "pages_excluded": 0,
+      "segments_excluded": 0,
+      "boundary_edits": 0,
+      "clean_blocks": 0,
+      "clean": false
+    },
+    {
+      "subject": "Z186",
+      "blocks": 25,
+      "raw": 25,
+      "processed": 25,
+      "pages_total": 500,
+      "pages_viewed": 0,
+      "review_percent": 0.0,
+      "pages_excluded": 0,
+      "segments_excluded": 0,
+      "boundary_edits": 0,
+      "clean_blocks": 0,
+      "clean": false
+    },
+    {
+      "subject": "Z205",
+      "blocks": 15,
+      "raw": 14,
+      "processed": 14,
+      "pages_total": 280,
+      "pages_viewed": 0,
+      "review_percent": 0.0,
+      "pages_excluded": 0,
+      "segments_excluded": 0,
+      "boundary_edits": 0,
+      "clean_blocks": 0,
+      "clean": false
+    }
+  ],
+  "metrics": [
+    {
+      "group": "blink",
+      "generated": "2026-10-04T23:01:51",
+      "rows": 2160,
+      "fresh": false,
+      "freshness": "review changed; methods changed; processed files changed"
+    },
+    {
+      "group": "drift",
+      "generated": "2026-10-04T23:12:12",
+      "rows": 10800,
+      "fresh": false,
+      "freshness": "review changed; methods changed; processed files changed"
+    },
+    {
+      "group": "fixation",
+      "generated": "2026-10-04T23:22:52",
+      "rows": 6480,
+      "fresh": false,
+      "freshness": "review changed; methods changed; processed files changed"
+    },
+    {
+      "group": "reading_perf",
+      "generated": "2026-11-10T00:26:31",
+      "rows": 10380,
+      "fresh": true,
+      "freshness": "up to date"
+    },
+    {
+      "group": "saccades",
+      "generated": "2026-11-10T00:23:25",
+      "rows": 100340,
+      "fresh": true,
+      "freshness": "up to date"
+    }
+  ],
+  "totals": {
+    "subjects": 10,
+    "raw_blocks": 173,
+    "processed_blocks": 173,
+    "expected_blocks": 205,
+    "pages_viewed": 1061,
+    "pages_total": 3460,
+    "clean_subjects": 0
+  }
+}

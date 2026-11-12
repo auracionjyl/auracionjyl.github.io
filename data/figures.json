@@ -433,29 +433,9 @@
     "module": "PSD",
     "family": "baseline peak temporal",
     "subject": "AN",
-    "title": "Noise 128",
-    "path": "assets/results/spectrum/baseline_peak_temporal/AN/noise_128.webp",
-    "source": "spectrum/baseline_peak_temporal/AN/noise_128.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "baseline peak temporal",
-    "subject": "AN",
     "title": "Noise 256",
     "path": "assets/results/spectrum/baseline_peak_temporal/AN/noise_256.webp",
     "source": "spectrum/baseline_peak_temporal/AN/noise_256.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "baseline peak temporal",
-    "subject": "AN",
-    "title": "Stimulus 128",
-    "path": "assets/results/spectrum/baseline_peak_temporal/AN/stimulus_128.webp",
-    "source": "spectrum/baseline_peak_temporal/AN/stimulus_128.png",
     "width": 1800,
     "height": 1246
   },
@@ -473,29 +453,9 @@
     "module": "PSD",
     "family": "baseline peak temporal",
     "subject": "KP",
-    "title": "Noise 128",
-    "path": "assets/results/spectrum/baseline_peak_temporal/KP/noise_128.webp",
-    "source": "spectrum/baseline_peak_temporal/KP/noise_128.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "baseline peak temporal",
-    "subject": "KP",
     "title": "Noise 256",
     "path": "assets/results/spectrum/baseline_peak_temporal/KP/noise_256.webp",
     "source": "spectrum/baseline_peak_temporal/KP/noise_256.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "baseline peak temporal",
-    "subject": "KP",
-    "title": "Stimulus 128",
-    "path": "assets/results/spectrum/baseline_peak_temporal/KP/stimulus_128.webp",
-    "source": "spectrum/baseline_peak_temporal/KP/stimulus_128.png",
     "width": 1800,
     "height": 1246
   },
@@ -513,29 +473,9 @@
     "module": "PSD",
     "family": "baseline peak temporal",
     "subject": "SM",
-    "title": "Noise 128",
-    "path": "assets/results/spectrum/baseline_peak_temporal/SM/noise_128.webp",
-    "source": "spectrum/baseline_peak_temporal/SM/noise_128.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "baseline peak temporal",
-    "subject": "SM",
     "title": "Noise 256",
     "path": "assets/results/spectrum/baseline_peak_temporal/SM/noise_256.webp",
     "source": "spectrum/baseline_peak_temporal/SM/noise_256.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "baseline peak temporal",
-    "subject": "SM",
-    "title": "Stimulus 128",
-    "path": "assets/results/spectrum/baseline_peak_temporal/SM/stimulus_128.webp",
-    "source": "spectrum/baseline_peak_temporal/SM/stimulus_128.png",
     "width": 1800,
     "height": 1246
   },
@@ -578,126 +518,6 @@
     "source": "spectrum/eye_only_Q/SM.png",
     "width": 1800,
     "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "AN",
-    "title": "Bm Noise",
-    "path": "assets/results/spectrum/retinal_128/AN/bm_noise.webp",
-    "source": "spectrum/retinal_128/AN/bm_noise.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "AN",
-    "title": "Bm Stimulus",
-    "path": "assets/results/spectrum/retinal_128/AN/bm_stimulus.webp",
-    "source": "spectrum/retinal_128/AN/bm_stimulus.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "AN",
-    "title": "Eye Noise",
-    "path": "assets/results/spectrum/retinal_128/AN/eye_noise.webp",
-    "source": "spectrum/retinal_128/AN/eye_noise.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "AN",
-    "title": "Eye Stimulus",
-    "path": "assets/results/spectrum/retinal_128/AN/eye_stimulus.webp",
-    "source": "spectrum/retinal_128/AN/eye_stimulus.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "KP",
-    "title": "Bm Noise",
-    "path": "assets/results/spectrum/retinal_128/KP/bm_noise.webp",
-    "source": "spectrum/retinal_128/KP/bm_noise.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "KP",
-    "title": "Bm Stimulus",
-    "path": "assets/results/spectrum/retinal_128/KP/bm_stimulus.webp",
-    "source": "spectrum/retinal_128/KP/bm_stimulus.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "KP",
-    "title": "Eye Noise",
-    "path": "assets/results/spectrum/retinal_128/KP/eye_noise.webp",
-    "source": "spectrum/retinal_128/KP/eye_noise.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "KP",
-    "title": "Eye Stimulus",
-    "path": "assets/results/spectrum/retinal_128/KP/eye_stimulus.webp",
-    "source": "spectrum/retinal_128/KP/eye_stimulus.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "SM",
-    "title": "Bm Noise",
-    "path": "assets/results/spectrum/retinal_128/SM/bm_noise.webp",
-    "source": "spectrum/retinal_128/SM/bm_noise.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "SM",
-    "title": "Bm Stimulus",
-    "path": "assets/results/spectrum/retinal_128/SM/bm_stimulus.webp",
-    "source": "spectrum/retinal_128/SM/bm_stimulus.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "SM",
-    "title": "Eye Noise",
-    "path": "assets/results/spectrum/retinal_128/SM/eye_noise.webp",
-    "source": "spectrum/retinal_128/SM/eye_noise.png",
-    "width": 1750,
-    "height": 1400
-  },
-  {
-    "module": "PSD",
-    "family": "retinal 128",
-    "subject": "SM",
-    "title": "Eye Stimulus",
-    "path": "assets/results/spectrum/retinal_128/SM/eye_stimulus.webp",
-    "source": "spectrum/retinal_128/SM/eye_stimulus.png",
-    "width": 1750,
-    "height": 1400
   },
   {
     "module": "PSD",
@@ -873,29 +693,9 @@
     "module": "PSD",
     "family": "temporal mean",
     "subject": "AN",
-    "title": "Noise 128",
-    "path": "assets/results/spectrum/temporal_mean/AN/noise_128.webp",
-    "source": "spectrum/temporal_mean/AN/noise_128.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "temporal mean",
-    "subject": "AN",
     "title": "Noise 256",
     "path": "assets/results/spectrum/temporal_mean/AN/noise_256.webp",
     "source": "spectrum/temporal_mean/AN/noise_256.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "temporal mean",
-    "subject": "AN",
-    "title": "Stimulus 128",
-    "path": "assets/results/spectrum/temporal_mean/AN/stimulus_128.webp",
-    "source": "spectrum/temporal_mean/AN/stimulus_128.png",
     "width": 1800,
     "height": 1246
   },
@@ -913,29 +713,9 @@
     "module": "PSD",
     "family": "temporal mean",
     "subject": "KP",
-    "title": "Noise 128",
-    "path": "assets/results/spectrum/temporal_mean/KP/noise_128.webp",
-    "source": "spectrum/temporal_mean/KP/noise_128.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "temporal mean",
-    "subject": "KP",
     "title": "Noise 256",
     "path": "assets/results/spectrum/temporal_mean/KP/noise_256.webp",
     "source": "spectrum/temporal_mean/KP/noise_256.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "temporal mean",
-    "subject": "KP",
-    "title": "Stimulus 128",
-    "path": "assets/results/spectrum/temporal_mean/KP/stimulus_128.webp",
-    "source": "spectrum/temporal_mean/KP/stimulus_128.png",
     "width": 1800,
     "height": 1246
   },
@@ -953,29 +733,9 @@
     "module": "PSD",
     "family": "temporal mean",
     "subject": "SM",
-    "title": "Noise 128",
-    "path": "assets/results/spectrum/temporal_mean/SM/noise_128.webp",
-    "source": "spectrum/temporal_mean/SM/noise_128.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "temporal mean",
-    "subject": "SM",
     "title": "Noise 256",
     "path": "assets/results/spectrum/temporal_mean/SM/noise_256.webp",
     "source": "spectrum/temporal_mean/SM/noise_256.png",
-    "width": 1800,
-    "height": 1246
-  },
-  {
-    "module": "PSD",
-    "family": "temporal mean",
-    "subject": "SM",
-    "title": "Stimulus 128",
-    "path": "assets/results/spectrum/temporal_mean/SM/stimulus_128.webp",
-    "source": "spectrum/temporal_mean/SM/stimulus_128.png",
     "width": 1800,
     "height": 1246
   },

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-10T11:36:18-05:00",
+  "generated": "2026-11-12T11:46:47-05:00",
   "subjects": [
     {
       "subject": "AN",
@@ -46,9 +46,9 @@
     {
       "subject": "Z251",
       "blocks": 25,
-      "raw": 21,
-      "processed": 21,
-      "pages_total": 420,
+      "raw": 25,
+      "processed": 25,
+      "pages_total": 500,
       "pages_viewed": 1,
       "review_percent": 0.2,
       "pages_excluded": 0,
@@ -168,24 +168,24 @@
       "group": "reading_perf",
       "generated": "2026-11-10T00:26:31",
       "rows": 10380,
-      "fresh": true,
-      "freshness": "up to date"
+      "fresh": false,
+      "freshness": "processed files changed"
     },
     {
       "group": "saccades",
       "generated": "2026-11-10T00:23:25",
       "rows": 100340,
-      "fresh": true,
-      "freshness": "up to date"
+      "fresh": false,
+      "freshness": "processed files changed"
     }
   ],
   "totals": {
     "subjects": 10,
-    "raw_blocks": 173,
-    "processed_blocks": 173,
+    "raw_blocks": 177,
+    "processed_blocks": 177,
     "expected_blocks": 205,
     "pages_viewed": 1061,
-    "pages_total": 3460,
+    "pages_total": 3540,
     "clean_subjects": 0
   }
 }

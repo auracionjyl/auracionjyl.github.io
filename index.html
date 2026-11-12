@@ -88,15 +88,36 @@
         <div><p class="eyebrow">02 / RESULTS</p><h2>Explore the figures</h2></div>
         <p>Filter the current production outputs by analysis module, figure family, or subject. Select any figure for a larger view.</p>
       </div>
-      <div class="filter-bar" aria-label="Result filters">
-        <div class="module-tabs" id="module-tabs" role="group" aria-label="Analysis module"></div>
-        <label class="search-field"><span class="sr-only">Search figures</span><input id="search-input" type="search" placeholder="Search title or subject…"></label>
-        <label><span>Family</span><select id="family-filter"><option value="all">All families</option></select></label>
-        <label><span>Subject</span><select id="subject-filter"><option value="all">All subjects</option></select></label>
+      <div class="result-browser">
+        <aside class="result-pages" aria-label="Result pages">
+          <p class="browser-label">PAGES</p>
+          <div class="module-tabs" id="module-tabs" role="tablist" aria-label="Analysis module"></div>
+          <p class="browser-note">Choose a page, then narrow by analysis and subject. One complete figure is shown at a time.</p>
+        </aside>
+        <div class="result-workspace">
+          <div class="browser-toolbar" aria-label="Figure controls">
+            <label><span id="family-label">Analysis</span><select id="family-filter"></select></label>
+            <label id="subject-control"><span id="subject-label">Subject</span><select id="subject-filter"></select></label>
+            <label class="search-field"><span>Find a figure</span><input id="search-input" type="search" placeholder="Type a figure name…"></label>
+          </div>
+          <div class="browser-main">
+            <aside class="figure-list-panel">
+              <div class="figure-list-heading"><span>FIGURES</span><strong id="result-count">—</strong></div>
+              <div class="figure-list" id="figure-list" role="listbox" aria-label="Figures"></div>
+            </aside>
+            <article class="figure-preview" id="figure-preview" aria-live="polite">
+              <div class="preview-header">
+                <div><p id="preview-module">—</p><h3 id="preview-title">Loading…</h3><p id="preview-detail"></p></div>
+                <button class="button secondary" id="preview-expand" type="button">View larger</button>
+              </div>
+              <button class="preview-image-button" id="preview-image-button" type="button" aria-label="Open figure in larger view">
+                <img id="preview-image" alt="">
+              </button>
+              <p class="preview-source" id="preview-source"></p>
+            </article>
+          </div>
+        </div>
       </div>
-      <div class="results-meta"><p id="result-count">Loading figures…</p><button class="text-button" id="clear-filters" type="button">Clear filters</button></div>
-      <div class="gallery" id="gallery" aria-live="polite"></div>
-      <button class="button secondary load-more" id="load-more" type="button" hidden>Show more</button>
     </section>
 
     <section class="section notes-section" id="notes">
@@ -114,11 +135,12 @@
   <footer><p>Reading Meta Analysis · Results Reviewer</p><p>Static snapshot · No raw participant data</p></footer>
 
   <dialog id="figure-dialog" aria-labelledby="dialog-title">
-    <button class="dialog-close" type="button" aria-label="Close figure">×</button>
-    <div class="dialog-image-wrap"><img id="dialog-image" alt=""></div>
     <div class="dialog-caption"><div><p id="dialog-module"></p><h2 id="dialog-title"></h2><p id="dialog-source"></p></div><a id="dialog-open" class="button secondary" target="_blank" rel="noopener">Open original</a></div>
+    <div class="dialog-image-wrap"><img id="dialog-image" alt=""></div>
+    <button class="dialog-close" type="button" aria-label="Close figure">×</button>
   </dialog>
 
+  <script src="data/snapshot.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>
